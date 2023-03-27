@@ -1,0 +1,374 @@
+openapi: 3.0.0
+info:
+  title: dab-api
+  description: 家計簿アプリ用API
+  version: 0.0.1
+servers:
+  - url: http://{host}:{port}/api
+    description: for development
+    variables:
+      host:
+        default: localhost
+      port:
+        default: "5000"
+
+tags:
+  - name: Receipts
+    description: レシートの情報にアクセスする
+  - name: Shops
+    description: 店の情報にアクセスする
+  - name: Currencies
+    description: 通貨の情報にアクセスする
+
+paths:
+  /receipts:
+    post:
+      tags:
+        - Receipts
+      summary: 新しいレシートを登録
+      requestBody:
+        $ref: "#/components/requestBodies/NewOrUpdatedReceipt"
+      responses:
+        "200":
+          $ref: "#/components/responses/ReceiptDetail"
+  /receipts/search:
+    post:
+      tags:
+        - Receipts
+      summary: 条件を指定して該当するレシートを検索
+      requestBody:
+        $ref: "#/components/requestBodies/ReceiptConditions"
+      responses:
+        "200":
+          $ref: "#/components/responses/ReceiptList"
+  /receipts/{receipt_id}:
+    get:
+      tags:
+        - Receipts
+      summary: レシートIDを指定して詳細を取得
+      parameters:
+        - in: path
+          name: receipt_id
+          required: true
+          schema:
+            $ref: "#/components/schemas/receipt_id"
+      responses:
+        "200":
+          $ref: "#/components/responses/ReceiptDetail"
+    patch:
+      tags:
+        - Receipts
+      summary: レシートIDを指定して更新
+      parameters:
+        - in: path
+          name: receipt_id
+          required: true
+          schema:
+            $ref: "#/components/schemas/receipt_id"
+      requestBody:
+        $ref: "#/components/requestBodies/NewOrUpdatedReceipt"
+      responses:
+        "200":
+          $ref: "#/components/responses/ReceiptDetail"
+    delete:
+      tags:
+        - Receipts
+      summary: レシートIDを指定して削除
+      parameters:
+        - in: path
+          name: receipt_id
+          required: true
+          schema:
+            $ref: "#/components/schemas/receipt_id"
+      responses:
+        "200":
+          description: The resource was deleted successefully.
+  /shops:
+    get:
+      tags:
+        - Shops
+      summary: 店一覧を取得
+      responses:
+        "200":
+          $ref: "#/components/responses/ShopList"
+    post:
+      tags:
+        - Shops
+      summary: 新しい店名を登録
+      requestBody:
+        $ref: "#/components/requestBodies/NewOrUpdatedShop"
+      responses:
+        "200":
+          $ref: "#/components/responses/NewOrUpdatedShop"
+  /shops/{shop_id}:
+    patch:
+      tags:
+      - Shops
+      summary: 店名を更新
+      parameters:
+        - in: path
+          name: shop_id
+          required: true
+          schema:
+            $ref: "#/components/schemas/shop_id"
+      requestBody:
+        $ref: "#/components/requestBodies/NewOrUpdatedShop"
+      responses:
+        "200":
+          $ref: "#/components/responses/NewOrUpdatedShop"
+  /currencies:
+    get:
+      tags:
+        - Currencies
+      summary: 通貨情報を取得
+      responses:
+        "200":
+          $ref: "#/components/responses/CurrencyList"
+    post:
+      tags:
+        - Currencies
+      summary: 通貨情報を登録
+      requestBody:
+        $ref: "#/components/requestBodies/NewOrUpdatedCurrency"
+      responses:
+        "200":
+          $ref: "#/components/responses/NewOrUpdatedCurrency"
+
+  /currencies/{currency_id}:
+    patch:
+      tags:
+        - Currencies
+      summary: 通貨情報を更新
+      parameters:
+        - in: path
+          name: currency_id
+          required: true
+      requestBody:
+        $ref: "#/components/requestBodies/NewOrUpdatedCurrency"
+      responses:
+        "200":
+          $ref: "#/components/responses/NewOrUpdatedCurrency"
+components:
+  schemas:
+    shop_id:
+      type: integer
+      description: 店ID
+    shop_name:
+      type: string
+      description: 店名
+    year:
+      type: integer
+      description: 年
+    month:
+      type: integer
+      description: 月
+    day:
+      type: integer
+      description: 日
+    date:
+      type: object
+      description: 時刻なし日付
+      properties:
+        year:
+          $ref: "#/components/schemas/year"
+        month:
+          $ref: "#/components/schemas/month"
+        day:
+          $ref: "#/components/schemas/day"
+    timestamp:
+      type: string
+      description: 時刻あり日付
+    price:
+      type: integer
+      description: 金額
+    receipt_id:
+      type: integer
+      description: レシートID
+    product_id:
+      type: integer
+      description: 購入品ID
+    product_name:
+      type: string
+      description: 商品名
+    shop:
+      type: object
+      description: 店情報
+      properties:
+        shop_id:
+          $ref: "#/components/schemas/shop_id"
+        shop_name:
+          $ref: "#/components/schemas/shop_name"
+        modified_at:
+          $ref: "#/components/schemas/timestamp"
+        created_at:
+          $ref: "#/components/schemas/timestamp"
+    shops:
+      type: object
+      properties:
+        shops:
+          type: array
+          items:
+            $ref: "#/components/schemas/shop"
+    product:
+      type: object
+      description: 商品リストの1要素
+      properties:
+        product_name:
+          $ref: "#/components/schemas/product_name"
+        price:
+          $ref: "#/components/schemas/price"
+    products:
+      type: array
+      items:
+        $ref: "#/components/schemas/product"
+    receipt:
+      type: object
+      description: レシート一覧の1要素
+      properties:
+        receipt_id:
+          $ref: "#/components/schemas/receipt_id"
+        shop_id:
+          $ref: "#/components/schemas/shop_id"
+        shop_name:
+          $ref: "#/components/schemas/shop_name"
+        currency_id:
+          $ref: "#/components/schemas/currency_id"
+        currency_name:
+          $ref: "#/components/schemas/currency_name"
+        purchase_date:
+          $ref: "#/components/schemas/date"
+        total_price:
+          $ref: "#/components/schemas/price"
+        products:
+          $ref: "#/components/schemas/products"
+    receipts:
+      type: object
+      properties:
+        receipts:
+          type: array
+          items:
+            $ref: "#/components/schemas/receipt"
+
+    # 通貨関連
+    currency_id:
+      type: integer
+      description: 通貨ID
+    currency_name:
+      type: string
+      description: 通貨名
+    in_yen:
+      $ref: "#/components/schemas/price"
+      description: 単位金額当たりの日本円に変換したときの金額
+    currency:
+      type: object
+      properties:
+        currency_id:
+          $ref: "#/components/schemas/currency_id"
+        currency_name:
+          $ref: "#/components/schemas/currency_name"
+        in_yen:
+          $ref: "#/components/schemas/in_yen"
+        modified_at:
+          $ref: "#/components/schemas/timestamp"
+        created_at:
+          $ref: "#/components/schemas/timestamp"
+    currencies:
+      type: array
+      items:
+        $ref: "#/components/schemas/currency"
+  responses:
+    ReceiptList:
+      description: 条件を満たすレシートの一覧
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/receipts"
+    NewOrUpdatedShop:
+      description: 新規登録もしくは更新された店情報
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/shop"
+    ShopList:
+      description: 店の一覧
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/shops"
+    ReceiptDetail:
+      description: レシート詳細
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/receipt"
+    # 通貨関連
+    NewOrUpdatedCurrency:
+      description: 新規登録もしくは更新された通貨情報
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/currency"
+    CurrencyList:
+      description: 通貨情報
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/currencies"
+  requestBodies:
+    ReceiptConditions:
+      required: false
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              shop_id:
+                $ref: "#/components/schemas/shop_id"
+              currency_id:
+                $ref: "#/components/schemas/currency_id"
+              min_price:
+                $ref: "#/components/schemas/price"
+              max_price:
+                $ref: "#/components/schemas/price"
+              purchased_since:
+                $ref: "#/components/schemas/date"
+              purchased_until:
+                $ref: "#/components/schemas/date"
+    NewOrUpdatedShop:
+      required: true
+      description: 新しい店名
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              shop_name:
+                $ref: "#/components/schemas/shop_name"
+    NewOrUpdatedReceipt:
+      required: true
+      description: 新規登録されたレシート
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              shop_id:
+                $ref: "#/components/schemas/shop_id"
+              currency_id:
+                $ref: "#/components/schemas/currency_id"
+              purchase_date:
+                $ref: "#/components/schemas/date"
+              products:
+                $ref: "#/components/schemas/products"
+    NewOrUpdatedCurrency:
+      required: true
+      description: 新しい通貨情報
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              currency_name:
+                $ref: "#/components/schemas/currency_id"
+              in_yen:
+                $ref: "#/components/schemas/in_yen"
