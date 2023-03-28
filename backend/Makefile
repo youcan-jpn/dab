@@ -39,7 +39,9 @@ gen-daocore:
 .PHONY: gen-from-oas
 gen-from-oas:
 	go install github.com/deepmap/oapi-codegen/cmd/oapi-codegen@v1.12.4
-	oapi-codegen -package oapi -o ./gen/oapi/oapi.gen.go ../documents/api/openapi.yaml
+	oapi-codegen -package oapi -generate server -o ./gen/oapi/oapi_server.gen.go ../documents/api/openapi.yaml
+	oapi-codegen -package oapi -generate types -o ./gen/oapi/oapi_type.gen.go ../documents/api/openapi.yaml
+	oapi-codegen -package oapi -generate spec -o ./gen/oapi/oapi_spec.gen.go ../documents/api/openapi.yaml
 
 .PHONY: go-fix-lint
 go-fix-lint:
