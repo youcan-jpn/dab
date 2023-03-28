@@ -5,3 +5,6 @@ create table products (
   , price FLOAT not null comment 'price'
   , constraint products_PKC primary key (receipt_id,product_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4;
+
+alter table products
+  add constraint products_FK1 foreign key (receipt_id) references receipts(receipt_id);

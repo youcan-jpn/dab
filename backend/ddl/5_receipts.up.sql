@@ -16,3 +16,8 @@ create index receipts_IX1
 create index receipts_IX2
   on receipts(purchase_date);
 
+alter table receipts
+  add constraint receipts_FK1 foreign key (currency_id) references currencies(currency_id);
+
+alter table receipts
+  add constraint receipts_FK2 foreign key (shop_id) references shops(shop_id);

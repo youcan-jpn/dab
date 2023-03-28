@@ -1,5 +1,5 @@
 -- Project Name : dab-database
--- Date/Time    : 2023/03/28 16:04:14
+-- Date/Time    : 2023/03/28 23:17:25
 -- Author       : Yuta Ono
 -- RDBMS Type   : MySQL
 -- Application  : A5:SQL Mk-2
@@ -13,6 +13,9 @@
 */
 
 -- shops
+--* BackupToTempTable
+drop table if exists shops cascade;
+
 --* RestoreFromTempTable
 create table shops (
   shop_id INT not null auto_increment comment 'shop_id'
@@ -23,6 +26,9 @@ create table shops (
 ) comment 'shops' ;
 
 -- currencies
+--* BackupToTempTable
+drop table if exists currencies cascade;
+
 --* RestoreFromTempTable
 create table currencies (
   currency_id INT not null auto_increment comment 'currency_id'
@@ -34,6 +40,9 @@ create table currencies (
 ) comment 'currencies' ;
 
 -- products
+--* BackupToTempTable
+drop table if exists products cascade;
+
 --* RestoreFromTempTable
 create table products (
   receipt_id INT not null comment 'receipt_id'
@@ -44,6 +53,9 @@ create table products (
 ) comment 'products' ;
 
 -- receipts
+--* BackupToTempTable
+drop table if exists receipts cascade;
+
 --* RestoreFromTempTable
 create table receipts (
   receipt_id INT not null auto_increment comment 'receipt_id'
@@ -61,4 +73,13 @@ create index receipts_IX1
 
 create index receipts_IX2
   on receipts(purchase_date);
+
+alter table receipts
+  add constraint receipts_FK1 foreign key (currency_id) references currencies(currency_id);
+
+alter table receipts
+  add constraint receipts_FK2 foreign key (shop_id) references shops(shop_id);
+
+alter table products
+  add constraint products_FK1 foreign key (receipt_id) references receipts(receipt_id);
 
