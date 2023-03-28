@@ -30,7 +30,7 @@ paths:
         $ref: "#/components/requestBodies/NewOrUpdatedReceipt"
       responses:
         "200":
-          $ref: "#/components/responses/ReceiptDetail"
+          $ref: "#/components/responses/ReceiptRes"
   /receipts/search:
     post:
       tags:
@@ -40,7 +40,7 @@ paths:
         $ref: "#/components/requestBodies/ReceiptConditions"
       responses:
         "200":
-          $ref: "#/components/responses/ReceiptList"
+          $ref: "#/components/responses/ReceiptListRes"
   /receipts/{receipt_id}:
     get:
       tags:
@@ -54,7 +54,7 @@ paths:
             $ref: "#/components/schemas/receipt_id"
       responses:
         "200":
-          $ref: "#/components/responses/ReceiptDetail"
+          $ref: "#/components/responses/ReceiptRes"
     patch:
       tags:
         - Receipts
@@ -69,7 +69,7 @@ paths:
         $ref: "#/components/requestBodies/NewOrUpdatedReceipt"
       responses:
         "200":
-          $ref: "#/components/responses/ReceiptDetail"
+          $ref: "#/components/responses/ReceiptRes"
     delete:
       tags:
         - Receipts
@@ -90,7 +90,7 @@ paths:
       summary: 店一覧を取得
       responses:
         "200":
-          $ref: "#/components/responses/ShopList"
+          $ref: "#/components/responses/ShopListRes"
     post:
       tags:
         - Shops
@@ -99,7 +99,7 @@ paths:
         $ref: "#/components/requestBodies/NewOrUpdatedShop"
       responses:
         "200":
-          $ref: "#/components/responses/NewOrUpdatedShop"
+          $ref: "#/components/responses/NewOrUpdatedShopRes"
   /shops/{shop_id}:
     patch:
       tags:
@@ -115,7 +115,7 @@ paths:
         $ref: "#/components/requestBodies/NewOrUpdatedShop"
       responses:
         "200":
-          $ref: "#/components/responses/NewOrUpdatedShop"
+          $ref: "#/components/responses/NewOrUpdatedShopRes"
   /currencies:
     get:
       tags:
@@ -123,7 +123,7 @@ paths:
       summary: 通貨情報を取得
       responses:
         "200":
-          $ref: "#/components/responses/CurrencyList"
+          $ref: "#/components/responses/CurrencyListRes"
     post:
       tags:
         - Currencies
@@ -132,7 +132,7 @@ paths:
         $ref: "#/components/requestBodies/NewOrUpdatedCurrency"
       responses:
         "200":
-          $ref: "#/components/responses/NewOrUpdatedCurrency"
+          $ref: "#/components/responses/NewOrUpdatedCurrencyRes"
 
   /currencies/{currency_id}:
     patch:
@@ -143,11 +143,13 @@ paths:
         - in: path
           name: currency_id
           required: true
+          schema:
+            $ref: "#/components/schemas/currency_id"
       requestBody:
         $ref: "#/components/requestBodies/NewOrUpdatedCurrency"
       responses:
         "200":
-          $ref: "#/components/responses/NewOrUpdatedCurrency"
+          $ref: "#/components/responses/NewOrUpdatedCurrencyRes"
 components:
   schemas:
     shop_id:
@@ -277,38 +279,38 @@ components:
       items:
         $ref: "#/components/schemas/currency"
   responses:
-    ReceiptList:
+    ReceiptListRes:
       description: 条件を満たすレシートの一覧
       content:
         application/json:
           schema:
             $ref: "#/components/schemas/receipts"
-    NewOrUpdatedShop:
+    NewOrUpdatedShopRes:
       description: 新規登録もしくは更新された店情報
       content:
         application/json:
           schema:
             $ref: "#/components/schemas/shop"
-    ShopList:
+    ShopListRes:
       description: 店の一覧
       content:
         application/json:
           schema:
             $ref: "#/components/schemas/shops"
-    ReceiptDetail:
+    ReceiptRes:
       description: レシート詳細
       content:
         application/json:
           schema:
             $ref: "#/components/schemas/receipt"
     # 通貨関連
-    NewOrUpdatedCurrency:
+    NewOrUpdatedCurrencyRes:
       description: 新規登録もしくは更新された通貨情報
       content:
         application/json:
           schema:
             $ref: "#/components/schemas/currency"
-    CurrencyList:
+    CurrencyListRes:
       description: 通貨情報
       content:
         application/json:
