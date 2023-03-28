@@ -1,0 +1,30 @@
+version: '3'
+services:
+  db:
+    image: mysql:latest
+    restart: "no"
+    environment:
+      MYSQL_USER: dab_user
+      MYSQL_DATABASE: dab_db
+      MYSQL_PASSWORD: passw0rd
+      MYSQL_ROOT_PASSWORD: passw0rd
+      TZ: "Asia/Tokyo"
+    volumes:
+      - ./ddl:/ddl
+      - dbdata:/var/lib/mysql
+    ports:
+      - "3336:3306"
+  go-dev:
+    build: ./docker/dev/
+    container_name: dab-go-dev
+    volumes:
+      - .:/dab
+    environment:
+      - DB_HOST=db
+      - DB_PORT=3306
+    ports:
+      - "1323:1323"
+    tty: true
+
+volumes:
+  dbdata:
