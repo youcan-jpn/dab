@@ -1,0 +1,186 @@
+﻿# A5:ER FORMAT:16
+# A5:ER ENCODING:UTF8
+# A5:ER Mk-1 Copyright © 2007 m.matsubara
+# A5:SQL Mk-2 Version 2.17.4 Copyright © 1997 - 2022 m.matsubara
+#  https://a5m2.mmatsubara.com
+
+[Manager]
+ProjectName=dab-database
+Author=Yuta Ono
+MaxEntityRowShow=1000
+ReadOnlyRecommend=1
+Page=Main
+PageInfo="Main",2,"A3Landscape",$FFFFFF
+LogicalView=1
+DecodeDomain=0
+ViewModePageIndividually=1
+ViewMode=2
+ViewFormat=0
+UseNondependenceDashLine=0
+FontName=Tahoma
+FontSize=14
+PaperSize=A4Landscape
+HeaderLeft=
+HeaderCenter=
+HeaderRight=
+FooterLeft=
+FooterCenter=
+FooterRight=
+ShowPageoutRelation=1
+RDBMSType=5
+RDBMSTypeName=MySQL
+DefaultPkName=%0:s_PKC
+DefaultPkIndexName=%0:s_PKI
+DefaultIndexName=%0:s_IX%1:d
+DefaultFkName=%0:s_FK%1:d
+SqlSeparator=0
+UpperCaseKeyword=0
+ShowTag=1
+ShowCommonAttributes=0
+BugFixEntityWidth=1
+
+[Entity]
+PName=receipts
+LName=receipts
+Comment=
+TableOption=
+Page=MAIN
+Left=1100
+Top=300
+Field="receipt_id","receipt_id","INT","NOT NULL",0,"","",$FFFFFFFF,""
+Field="shop_id","shop_id","INT","NOT NULL",,"","",$FFFFFFFF,""
+Field="currency_id","currency_id","INT","NOT NULL",,"","",$FFFFFFFF,""
+Field="total_price","total_price","FLOAT","NOT NULL",,"","",$FFFFFFFF,""
+Field="purchase_date","purchase_date","DATE","NOT NULL",,"","",$FFFFFFFF,""
+Field="modified_at","modified_at","TIMESTAMP","NOT NULL",,"current_timestamp on update current_timestamp","",$FFFFFFFF,""
+Field="created_at","created_at","TIMESTAMP","NOT NULL",,"current_timestamp","",$FFFFFFFF,""
+Index==0,total_price
+Index==0,purchase_date
+EffectMode=None
+Color=$000000
+BkColor=$FFFFFF
+ModifiedDateTime=20230328150007
+Position="MAIN",1100,300,569,489
+ZOrder=1
+
+[Entity]
+PName=products
+LName=products
+Comment=
+TableOption=
+Page=MAIN
+Left=2300
+Top=350
+Field="receipt_id","receipt_id","INT","NOT NULL",0,"","",$FFFFFFFF,""
+Field="product_id","product_id","INT","NOT NULL",1,"","",$FFFFFFFF,""
+Field="product_name","product_name","VARCHAR(100)","NOT NULL",,"","",$FFFFFFFF,""
+Field="price","price","FLOAT","NOT NULL",,"","",$FFFFFFFF,""
+EffectMode=None
+Color=$000000
+BkColor=$FFFFFF
+ModifiedDateTime=20230328145631
+Position="MAIN",2300,350,421,315
+ZOrder=2
+
+[Entity]
+PName=currencies
+LName=currencies
+Comment=
+TableOption=
+Page=MAIN
+Left=2300
+Top=950
+Field="currency_id","currency_id","INT","NOT NULL",0,"","",$FFFFFFFF,""
+Field="currency_name","currency_name","CHAR(3)","NOT NULL",,"","",$FFFFFFFF,""
+Field="in_yen","in_yen","FLOAT","NOT NULL",,"","",$FFFFFFFF,""
+Field="modified_at","modified_at","TIMESTAMP","NOT NULL",,"current_timestamp on update current_timestamp","",$FFFFFFFF,""
+Field="created_at","created_at","TIMESTAMP","NOT NULL",,"current_timestamp","",$FFFFFFFF,""
+EffectMode=None
+Color=$000000
+BkColor=$FFFFFF
+ModifiedDateTime=20230328145428
+Position="MAIN",2300,950,487,341
+ZOrder=3
+
+[Entity]
+PName=shops
+LName=shops
+Comment=
+TableOption=
+Page=MAIN
+Left=2000
+Top=1400
+Field="shop_id","shop_id","INT","NOT NULL",0,"","",$FFFFFFFF,""
+Field="shop_name","shop_name","VARCHAR(100)","NOT NULL",,"","",$FFFFFFFF,""
+Field="modified_at","modified_at","TIMESTAMP","NOT NULL",,"current_timestamp on update current_timestamp","",$FFFFFFFF,""
+Field="created_at","created_at","TIMESTAMP","NOT NULL",,"current_timestamp","",$FFFFFFFF,""
+EffectMode=None
+Color=$000000
+BkColor=$FFFFFF
+ModifiedDateTime=20230328145801
+Position="MAIN",2000,1400,445,325
+ZOrder=4
+
+[Relation]
+Entity1=receipts
+Entity2=products
+RelationType1=2
+RelationType2=4
+Fields1=receipt_id
+Fields2=receipt_id
+Cardinarity1=
+Cardinarity2=
+Position="MAIN",0,2174,7826,1788,R,R,""
+Dependence=1
+Caption=
+PName=
+ModifiedDateTime=20230328150258
+LineMode=0
+Bar1=217
+Bar2=783
+Bar3=179
+TermPos1=R
+TermPos2=R
+ZOrder=5
+
+[Relation]
+Entity1=shops
+Entity2=receipts
+RelationType1=2
+RelationType2=3
+Fields1=shop_id
+Fields2=shop_id
+Cardinarity1=
+Cardinarity2=
+Position="MAIN",0,1769,8231,4178,R,R,""
+Dependence=0
+Caption=
+PName=
+LineMode=0
+Bar1=177
+Bar2=823
+Bar3=418
+TermPos1=R
+TermPos2=R
+ZOrder=8
+
+[Relation]
+Entity1=currencies
+Entity2=receipts
+RelationType1=2
+RelationType2=3
+Fields1=currency_id
+Fields2=currency_id
+Cardinarity1=
+Cardinarity2=
+Position="MAIN",0,2299,7701,5931,R,R,""
+Dependence=0
+Caption=
+PName=
+LineMode=0
+Bar1=230
+Bar2=770
+Bar3=593
+TermPos1=R
+TermPos2=R
+ZOrder=9
