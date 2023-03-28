@@ -1,0 +1,360 @@
+{
+  "schemas": [
+    {
+      "type": "mysql",
+      "name": "dab_db",
+      "tables": [
+        {
+          "type": "table",
+          "name": "currencies",
+          "columns": [
+            {
+              "name": "currency_id",
+              "datatype": {
+                "type": "int"
+              },
+              "is_primary": true,
+              "is_sequence": true
+            },
+            {
+              "name": "currency_name",
+              "datatype": {
+                "type": "char",
+                "prec": 3
+              }
+            },
+            {
+              "name": "in_yen",
+              "datatype": {
+                "type": "float"
+              }
+            },
+            {
+              "name": "modified_at",
+              "datatype": {
+                "type": "timestamp"
+              },
+              "default": "CURRENT_TIMESTAMP"
+            },
+            {
+              "name": "created_at",
+              "datatype": {
+                "type": "timestamp"
+              },
+              "default": "CURRENT_TIMESTAMP"
+            }
+          ],
+          "primary_keys": [
+            {
+              "name": "currency_id",
+              "datatype": {
+                "type": "int"
+              },
+              "is_primary": true,
+              "is_sequence": true
+            }
+          ],
+          "indexes": [
+            {
+              "name": "currencies_currency_id_pkey",
+              "fields": [
+                {
+                  "name": "currency_id",
+                  "datatype": {
+                    "type": "int"
+                  },
+                  "is_primary": true,
+                  "is_sequence": true
+                }
+              ],
+              "is_unique": true,
+              "is_primary": true
+            }
+          ]
+        },
+        {
+          "type": "table",
+          "name": "products",
+          "columns": [
+            {
+              "name": "receipt_id",
+              "datatype": {
+                "type": "int"
+              },
+              "is_primary": true
+            },
+            {
+              "name": "product_id",
+              "datatype": {
+                "type": "int"
+              },
+              "is_primary": true
+            },
+            {
+              "name": "product_name",
+              "datatype": {
+                "type": "varchar",
+                "prec": 100
+              }
+            },
+            {
+              "name": "price",
+              "datatype": {
+                "type": "float"
+              }
+            }
+          ],
+          "primary_keys": [
+            {
+              "name": "receipt_id",
+              "datatype": {
+                "type": "int"
+              },
+              "is_primary": true
+            },
+            {
+              "name": "product_id",
+              "datatype": {
+                "type": "int"
+              },
+              "is_primary": true
+            }
+          ],
+          "indexes": [
+            {
+              "name": "products_receipt_id_product_id_pkey",
+              "fields": [
+                {
+                  "name": "receipt_id",
+                  "datatype": {
+                    "type": "int"
+                  },
+                  "is_primary": true
+                },
+                {
+                  "name": "product_id",
+                  "datatype": {
+                    "type": "int"
+                  },
+                  "is_primary": true
+                }
+              ],
+              "is_unique": true,
+              "is_primary": true
+            }
+          ],
+          "manual": true
+        },
+        {
+          "type": "table",
+          "name": "receipts",
+          "columns": [
+            {
+              "name": "receipt_id",
+              "datatype": {
+                "type": "int"
+              },
+              "is_primary": true,
+              "is_sequence": true
+            },
+            {
+              "name": "shop_id",
+              "datatype": {
+                "type": "int"
+              }
+            },
+            {
+              "name": "currency_id",
+              "datatype": {
+                "type": "int"
+              }
+            },
+            {
+              "name": "total_price",
+              "datatype": {
+                "type": "float"
+              }
+            },
+            {
+              "name": "purchase_date",
+              "datatype": {
+                "type": "date"
+              }
+            },
+            {
+              "name": "modified_at",
+              "datatype": {
+                "type": "timestamp"
+              },
+              "default": "CURRENT_TIMESTAMP"
+            },
+            {
+              "name": "created_at",
+              "datatype": {
+                "type": "timestamp"
+              },
+              "default": "CURRENT_TIMESTAMP"
+            }
+          ],
+          "primary_keys": [
+            {
+              "name": "receipt_id",
+              "datatype": {
+                "type": "int"
+              },
+              "is_primary": true,
+              "is_sequence": true
+            }
+          ],
+          "indexes": [
+            {
+              "name": "receipts_IX1",
+              "fields": [
+                {
+                  "name": "total_price",
+                  "datatype": {
+                    "type": "float"
+                  }
+                }
+              ]
+            },
+            {
+              "name": "receipts_IX2",
+              "fields": [
+                {
+                  "name": "purchase_date",
+                  "datatype": {
+                    "type": "date"
+                  }
+                }
+              ]
+            },
+            {
+              "name": "receipts_receipt_id_pkey",
+              "fields": [
+                {
+                  "name": "receipt_id",
+                  "datatype": {
+                    "type": "int"
+                  },
+                  "is_primary": true,
+                  "is_sequence": true
+                }
+              ],
+              "is_unique": true,
+              "is_primary": true
+            }
+          ]
+        },
+        {
+          "type": "table",
+          "name": "schema_migrations",
+          "columns": [
+            {
+              "name": "version",
+              "datatype": {
+                "type": "bigint"
+              },
+              "is_primary": true
+            },
+            {
+              "name": "dirty",
+              "datatype": {
+                "type": "tinyint",
+                "prec": 1
+              }
+            }
+          ],
+          "primary_keys": [
+            {
+              "name": "version",
+              "datatype": {
+                "type": "bigint"
+              },
+              "is_primary": true
+            }
+          ],
+          "indexes": [
+            {
+              "name": "schema_migrations_version_pkey",
+              "fields": [
+                {
+                  "name": "version",
+                  "datatype": {
+                    "type": "bigint"
+                  },
+                  "is_primary": true
+                }
+              ],
+              "is_unique": true,
+              "is_primary": true
+            }
+          ],
+          "manual": true
+        },
+        {
+          "type": "table",
+          "name": "shops",
+          "columns": [
+            {
+              "name": "shop_id",
+              "datatype": {
+                "type": "int"
+              },
+              "is_primary": true,
+              "is_sequence": true
+            },
+            {
+              "name": "shop_name",
+              "datatype": {
+                "type": "varchar",
+                "prec": 100
+              }
+            },
+            {
+              "name": "modified_at",
+              "datatype": {
+                "type": "timestamp"
+              },
+              "default": "CURRENT_TIMESTAMP"
+            },
+            {
+              "name": "created_at",
+              "datatype": {
+                "type": "timestamp"
+              },
+              "default": "CURRENT_TIMESTAMP"
+            }
+          ],
+          "primary_keys": [
+            {
+              "name": "shop_id",
+              "datatype": {
+                "type": "int"
+              },
+              "is_primary": true,
+              "is_sequence": true
+            }
+          ],
+          "indexes": [
+            {
+              "name": "shops_shop_id_pkey",
+              "fields": [
+                {
+                  "name": "shop_id",
+                  "datatype": {
+                    "type": "int"
+                  },
+                  "is_primary": true,
+                  "is_sequence": true
+                }
+              ],
+              "is_unique": true,
+              "is_primary": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
