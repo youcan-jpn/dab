@@ -5,14 +5,20 @@ DELETE FROM currencies;
 
 INSERT INTO shops (
     shop_id,  -- 実際はAUTO_INCREMENT
-    shop_name
+    shop_name,
+    modified_at,  -- 実際は自動挿入
+    created_at  -- 実際は自動挿入
 )
 VALUES (
     1,
-    "sample_shop_1"
+    "sample_shop_1",
+    '2011-01-01 01:01:01',
+    '2011-01-01 01:00:00'
 ), (
     2,
-    "sample_shop_2"
+    "sample_shop_2",
+    '2011-01-02 02:02:02',
+    '2011-01-02 02:00:00'
 );
 
 INSERT INTO currencies (
