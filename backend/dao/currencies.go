@@ -12,10 +12,10 @@ import (
 	"github.com/youcan-jpn/dab/backend/src/dberror"
 )
 
-func SelectAllCurrencies(ctx context.Context, txn *sql.Tx) ([]*daocore.Shop, error) {
+func SelectAllCurrencies(ctx context.Context, txn *sql.Tx) ([]*daocore.Currency, error) {
 	query, params, err := squirrel.
-		Select(daocore.ShopAllColumns...).
-		From(daocore.ShopTableName).
+		Select(daocore.CurrencyAllColumns...).
+		From(daocore.CurrencyTableName).
 		ToSql()
 	if err != nil {
 		return nil, dberror.MapError(err)
@@ -28,9 +28,9 @@ func SelectAllCurrencies(ctx context.Context, txn *sql.Tx) ([]*daocore.Shop, err
 	if err != nil {
 		return nil, dberror.MapError(err)
 	}
-	res := make([]*daocore.Shop, 0)
+	res := make([]*daocore.Currency, 0)
 	for rows.Next() {
-		t, err := daocore.IterateShop(rows)
+		t, err := daocore.IterateCurrency(rows)
 		if err != nil {
 			return nil, dberror.MapError(err)
 		}
