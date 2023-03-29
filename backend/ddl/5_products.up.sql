@@ -8,3 +8,6 @@ create table products (
 
 alter table products
   add constraint products_FK1 foreign key (receipt_id) references receipts(receipt_id);
+
+create index products_IX1
+  on products(receipt_id);  -- 不要だがxoのために記述

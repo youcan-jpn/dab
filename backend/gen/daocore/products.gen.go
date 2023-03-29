@@ -76,6 +76,38 @@ func IterateProduct(sc interface{ Scan(...interface{}) error}) (Product, error) 
     return t, nil
 }
 
+func SelectProductByReceiptID(ctx context.Context, txn *sql.Tx, receipt_id *int) ([]*Product, error) {
+    eq := squirrel.Eq{}
+    if receipt_id != nil {
+        eq["receipt_id"] = *receipt_id
+    }
+    query, params, err := squirrel.
+        Select(ProductAllColumns...).
+        From(ProductTableName).
+        Where(eq).
+        ToSql()
+    if err != nil {
+        return nil, dberror.MapError(err)
+    }
+    stmt, err := txn.PrepareContext(ctx, query)
+    if err != nil {
+        return nil, dberror.MapError(err)
+    }
+    rows, err := stmt.QueryContext(ctx, params...)
+    if err != nil {
+        return nil, dberror.MapError(err)
+    }
+    res := make([]*Product, 0)
+    for rows.Next() {
+        t, err := IterateProduct(rows)
+        if err != nil {
+            return nil, dberror.MapError(err)
+        }
+        res = append(res, &t)
+    }
+    return res, nil
+}
+
 func SelectOneProductByReceiptIDAndProductID(ctx context.Context, txn *sql.Tx, receipt_id *int,product_id *int) (Product, error) {
     eq := squirrel.Eq{}
     if receipt_id != nil {
@@ -156,6 +188,26 @@ func UpsertProduct(ctx context.Context, txn *sql.Tx, record Product) error {
     query, params, err := squirrel.Insert(ProductTableName).Columns(ProductColumnsWOMagics...).Values(record.Values()...).SuffixExpr(squirrel.Expr("ON DUPLICATE KEY UPDATE "+updateSQL, params...)).ToSql()
     if err != nil {
         return err
+    }
+    stmt, err := txn.PrepareContext(ctx, query)
+    if err != nil {
+        return dberror.MapError(err)
+    }
+    if _, err = stmt.Exec(params...); err != nil {
+        return dberror.MapError(err)
+    }
+    return nil
+}
+
+func DeleteProductByReceiptID(ctx context.Context, txn *sql.Tx, receipt_id int) error {
+    query, params, err := squirrel.
+        Delete(ProductTableName).
+        Where(squirrel.Eq{
+            "receipt_id": receipt_id,
+        }).
+        ToSql()
+    if err != nil {
+        return dberror.MapError(err)
     }
     stmt, err := txn.PrepareContext(ctx, query)
     if err != nil {

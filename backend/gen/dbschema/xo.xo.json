@@ -133,6 +133,18 @@
           ],
           "indexes": [
             {
+              "name": "products_IX1",
+              "fields": [
+                {
+                  "name": "receipt_id",
+                  "datatype": {
+                    "type": "int"
+                  },
+                  "is_primary": true
+                }
+              ]
+            },
+            {
               "name": "products_receipt_id_product_id_pkey",
               "fields": [
                 {
