@@ -56,6 +56,17 @@
           ],
           "indexes": [
             {
+              "name": "in_yen",
+              "fields": [
+                {
+                  "name": "in_yen",
+                  "datatype": {
+                    "type": "float"
+                  }
+                }
+              ]
+            },
+            {
               "name": "currencies_currency_id_pkey",
               "fields": [
                 {
@@ -143,6 +154,31 @@
               "is_primary": true
             }
           ],
+          "foreign_keys": [
+            {
+              "name": "products_FK1",
+              "column": [
+                {
+                  "name": "receipt_id",
+                  "datatype": {
+                    "type": "int"
+                  },
+                  "is_primary": true
+                }
+              ],
+              "ref_table": "receipts",
+              "ref_column": [
+                {
+                  "name": "receipt_id",
+                  "datatype": {
+                    "type": "int"
+                  },
+                  "is_primary": true,
+                  "is_sequence": true
+                }
+              ]
+            }
+          ],
           "manual": true
         },
         {
@@ -208,6 +244,28 @@
           ],
           "indexes": [
             {
+              "name": "receipts_FK1",
+              "fields": [
+                {
+                  "name": "currency_id",
+                  "datatype": {
+                    "type": "int"
+                  }
+                }
+              ]
+            },
+            {
+              "name": "receipts_FK2",
+              "fields": [
+                {
+                  "name": "shop_id",
+                  "datatype": {
+                    "type": "int"
+                  }
+                }
+              ]
+            },
+            {
               "name": "receipts_IX1",
               "fields": [
                 {
@@ -243,6 +301,52 @@
               ],
               "is_unique": true,
               "is_primary": true
+            }
+          ],
+          "foreign_keys": [
+            {
+              "name": "receipts_FK1",
+              "column": [
+                {
+                  "name": "currency_id",
+                  "datatype": {
+                    "type": "int"
+                  }
+                }
+              ],
+              "ref_table": "currencies",
+              "ref_column": [
+                {
+                  "name": "currency_id",
+                  "datatype": {
+                    "type": "int"
+                  },
+                  "is_primary": true,
+                  "is_sequence": true
+                }
+              ]
+            },
+            {
+              "name": "receipts_FK2",
+              "column": [
+                {
+                  "name": "shop_id",
+                  "datatype": {
+                    "type": "int"
+                  }
+                }
+              ],
+              "ref_table": "shops",
+              "ref_column": [
+                {
+                  "name": "shop_id",
+                  "datatype": {
+                    "type": "int"
+                  },
+                  "is_primary": true,
+                  "is_sequence": true
+                }
+              ]
             }
           ]
         },
@@ -337,6 +441,18 @@
             }
           ],
           "indexes": [
+            {
+              "name": "shop_name",
+              "fields": [
+                {
+                  "name": "shop_name",
+                  "datatype": {
+                    "type": "varchar",
+                    "prec": 100
+                  }
+                }
+              ]
+            },
             {
               "name": "shops_shop_id_pkey",
               "fields": [

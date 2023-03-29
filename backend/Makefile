@@ -24,6 +24,7 @@ endif
 .PHONY: db-migrate
 db-migrate: __init-db-args
 	go install -tags mysql github.com/golang-migrate/migrate/v4/cmd/migrate@v4.15.2
+	migrate -source "file://ddl" -database "mysql://$(DB_USER):$(DB_PASS)@tcp($(DB_HOST):$(DB_PORT))/$(DB_NAME)" down
 	migrate -source "file://ddl" -database "mysql://$(DB_USER):$(DB_PASS)@tcp($(DB_HOST):$(DB_PORT))/$(DB_NAME)" up
 	$(MAKE) gen-xo
 

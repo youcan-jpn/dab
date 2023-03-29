@@ -2,183 +2,235 @@
 package daocore
 
 import (
-	"context"
-	"database/sql"
-	"strings"
-	"time"
+    "context"
+    "database/sql"
+    "strings"
+    "time"
 
-	"github.com/Masterminds/squirrel"
+    "github.com/Masterminds/squirrel"
 
-	"github.com/youcan-jpn/dab/backend/src/dberror"
-	"github.com/youcan-jpn/dab/backend/src/util/filter"
+    "github.com/youcan-jpn/dab/backend/src/dberror"
+    "github.com/youcan-jpn/dab/backend/src/util/filter"
 )
 
 const CurrencyTableName = "currencies"
 
 var CurrencyAllColumns = []string{
-	"currency_id",
-	"currency_name",
-	"in_yen",
-	"modified_at",
-	"created_at",
+    "currency_id",
+    "currency_name",
+    "in_yen",
+    "modified_at",
+    "created_at",
 }
 
 var CurrencyColumnsWOMagics = []string{
-	"currency_id",
-	"currency_name",
-	"in_yen",
-	"modified_at",
+    "currency_id",
+    "currency_name",
+    "in_yen",
 }
 
 var CurrencyPrimaryKeyColumns = []string{
-	"currency_id",
+    "currency_id",
 }
 
 type Currency struct {
-	CurrencyID   int
-	CurrencyName string
-	InYen        float32
-	ModifiedAt   *time.Time
-	CreatedAt    *time.Time
+    CurrencyID int
+    CurrencyName string
+    InYen float32
+    ModifiedAt *time.Time
+    CreatedAt *time.Time
 }
 
 func (t *Currency) Values() []interface{} {
-	return []interface{}{
-		t.CurrencyID,
-		t.CurrencyName,
-		t.InYen,
-		t.ModifiedAt,
-	}
+    return []interface{}{
+        t.CurrencyID,
+        t.CurrencyName,
+        t.InYen,
+    }
 }
 
 func (t *Currency) SetMap() map[string]interface{} {
-	return map[string]interface{}{
-		"currency_id":   t.CurrencyID,
-		"currency_name": t.CurrencyName,
-		"in_yen":        t.InYen,
-		"modified_at":   t.ModifiedAt,
-	}
+    return map[string]interface{}{
+        "currency_id": t.CurrencyID,
+        "currency_name": t.CurrencyName,
+        "in_yen": t.InYen,
+    }
 }
 
 func (t *Currency) Ptrs() []interface{} {
-	return []interface{}{
-		&t.CurrencyID,
-		&t.CurrencyName,
-		&t.InYen,
-		&t.ModifiedAt,
-		&t.CreatedAt,
-	}
+    return []interface{}{
+        &t.CurrencyID,
+        &t.CurrencyName,
+        &t.InYen,
+        &t.ModifiedAt,
+        &t.CreatedAt,
+    }
 }
 
-func IterateCurrency(sc interface{ Scan(...interface{}) error }) (Currency, error) {
-	t := Currency{}
-	if err := sc.Scan(t.Ptrs()...); err != nil {
-		return Currency{}, dberror.MapError(err)
-	}
-	return t, nil
+func IterateCurrency(sc interface{ Scan(...interface{}) error}) (Currency, error) {
+    t := Currency{}
+    if err := sc.Scan(t.Ptrs()...); err != nil {
+        return Currency{}, dberror.MapError(err)
+    }
+    return t, nil
+}
+
+func SelectCurrencyByInYen(ctx context.Context, txn *sql.Tx, in_yen *float32) ([]*Currency, error) {
+    eq := squirrel.Eq{}
+    if in_yen != nil {
+        eq["in_yen"] = *in_yen
+    }
+    query, params, err := squirrel.
+        Select(CurrencyAllColumns...).
+        From(CurrencyTableName).
+        Where(eq).
+        ToSql()
+    if err != nil {
+        return nil, dberror.MapError(err)
+    }
+    stmt, err := txn.PrepareContext(ctx, query)
+    if err != nil {
+        return nil, dberror.MapError(err)
+    }
+    rows, err := stmt.QueryContext(ctx, params...)
+    if err != nil {
+        return nil, dberror.MapError(err)
+    }
+    res := make([]*Currency, 0)
+    for rows.Next() {
+        t, err := IterateCurrency(rows)
+        if err != nil {
+            return nil, dberror.MapError(err)
+        }
+        res = append(res, &t)
+    }
+    return res, nil
 }
 
 func SelectOneCurrencyByCurrencyID(ctx context.Context, txn *sql.Tx, currency_id *int) (Currency, error) {
-	eq := squirrel.Eq{}
-	if currency_id != nil {
-		eq["currency_id"] = *currency_id
-	}
-	query, params, err := squirrel.
-		Select(CurrencyAllColumns...).
-		From(CurrencyTableName).
-		Where(eq).
-		ToSql()
-	if err != nil {
-		return Currency{}, dberror.MapError(err)
-	}
-	stmt, err := txn.PrepareContext(ctx, query)
-	if err != nil {
-		return Currency{}, dberror.MapError(err)
-	}
-	return IterateCurrency(stmt.QueryRowContext(ctx, params...))
+    eq := squirrel.Eq{}
+    if currency_id != nil {
+        eq["currency_id"] = *currency_id
+    }
+    query, params, err := squirrel.
+        Select(CurrencyAllColumns...).
+        From(CurrencyTableName).
+        Where(eq).
+        ToSql()
+    if err != nil {
+        return Currency{}, dberror.MapError(err)
+    }
+    stmt, err := txn.PrepareContext(ctx, query)
+    if err != nil {
+        return Currency{}, dberror.MapError(err)
+    }
+    return IterateCurrency(stmt.QueryRowContext(ctx, params...))
 }
 
+
+
 func InsertCurrency(ctx context.Context, txn *sql.Tx, records []*Currency) error {
-	records = filter.OmitNil[Currency](records)
-	if len(records) == 0 {
-		return nil
-	}
-	sq := squirrel.Insert(CurrencyTableName).Columns(CurrencyColumnsWOMagics...)
-	for _, r := range records {
-		if r == nil {
-			continue
-		}
-		sq = sq.Values(r.Values()...)
-	}
-	query, params, err := sq.ToSql()
-	if err != nil {
-		return err
-	}
-	stmt, err := txn.PrepareContext(ctx, query)
-	if err != nil {
-		return dberror.MapError(err)
-	}
-	if _, err = stmt.Exec(params...); err != nil {
-		return dberror.MapError(err)
-	}
-	return nil
+    records = filter.OmitNil[Currency](records)
+    if len(records) == 0 {
+        return nil
+    }
+    sq := squirrel.Insert(CurrencyTableName).Columns(CurrencyColumnsWOMagics...)
+    for _, r := range records {
+        if r == nil {
+            continue
+        }
+        sq = sq.Values(r.Values()...)
+    }
+    query, params, err := sq.ToSql()
+    if err != nil {
+        return err
+    }
+    stmt, err := txn.PrepareContext(ctx, query)
+    if err != nil {
+        return dberror.MapError(err)
+    }
+    if _, err = stmt.Exec(params...); err != nil {
+        return dberror.MapError(err)
+    }
+    return nil
 }
 
 func UpdateCurrency(ctx context.Context, txn *sql.Tx, record Currency) error {
-	sql, params, err := squirrel.Update(CurrencyTableName).SetMap(record.SetMap()).
-		Where(squirrel.Eq{
-			"currency_id": record.CurrencyID,
-		}).
-		ToSql()
-	if err != nil {
-		return err
-	}
-	stmt, err := txn.PrepareContext(ctx, sql)
-	if err != nil {
-		return dberror.MapError(err)
-	}
-	if _, err = stmt.Exec(params...); err != nil {
-		return dberror.MapError(err)
-	}
-	return nil
+    sql, params, err := squirrel.Update(CurrencyTableName).SetMap(record.SetMap()).
+        Where(squirrel.Eq{
+        "currency_id": record.CurrencyID,
+    }).
+        ToSql()
+    if err != nil {
+        return err
+    }
+    stmt, err := txn.PrepareContext(ctx, sql)
+    if err != nil {
+        return dberror.MapError(err)
+    }
+    if _, err = stmt.Exec(params...); err != nil {
+        return dberror.MapError(err)
+    }
+    return nil
 }
 
 func UpsertCurrency(ctx context.Context, txn *sql.Tx, record Currency) error {
-	updateSQL, params, err := squirrel.Update(CurrencyTableName).SetMap(record.SetMap()).ToSql()
-	if err != nil {
-		return err
-	}
-	updateSQL = strings.TrimPrefix(updateSQL, "UPDATE "+CurrencyTableName+" SET ")
-	query, params, err := squirrel.Insert(CurrencyTableName).Columns(CurrencyColumnsWOMagics...).Values(record.Values()...).SuffixExpr(squirrel.Expr("ON DUPLICATE KEY UPDATE "+updateSQL, params...)).ToSql()
-	if err != nil {
-		return err
-	}
-	stmt, err := txn.PrepareContext(ctx, query)
-	if err != nil {
-		return dberror.MapError(err)
-	}
-	if _, err = stmt.Exec(params...); err != nil {
-		return dberror.MapError(err)
-	}
-	return nil
+    updateSQL, params, err := squirrel.Update(CurrencyTableName).SetMap(record.SetMap()).ToSql()
+    if err != nil {
+        return err
+    }
+    updateSQL = strings.TrimPrefix(updateSQL, "UPDATE "+CurrencyTableName+" SET ")
+    query, params, err := squirrel.Insert(CurrencyTableName).Columns(CurrencyColumnsWOMagics...).Values(record.Values()...).SuffixExpr(squirrel.Expr("ON DUPLICATE KEY UPDATE "+updateSQL, params...)).ToSql()
+    if err != nil {
+        return err
+    }
+    stmt, err := txn.PrepareContext(ctx, query)
+    if err != nil {
+        return dberror.MapError(err)
+    }
+    if _, err = stmt.Exec(params...); err != nil {
+        return dberror.MapError(err)
+    }
+    return nil
+}
+
+func DeleteCurrencyByInYen(ctx context.Context, txn *sql.Tx, in_yen float32) error {
+    query, params, err := squirrel.
+        Delete(CurrencyTableName).
+        Where(squirrel.Eq{
+            "in_yen": in_yen,
+        }).
+        ToSql()
+    if err != nil {
+        return dberror.MapError(err)
+    }
+    stmt, err := txn.PrepareContext(ctx, query)
+    if err != nil {
+        return dberror.MapError(err)
+    }
+    if _, err = stmt.Exec(params...); err != nil {
+        return dberror.MapError(err)
+    }
+    return nil
 }
 
 func DeleteOneCurrencyByCurrencyID(ctx context.Context, txn *sql.Tx, currency_id int) error {
-	query, params, err := squirrel.
-		Delete(CurrencyTableName).
-		Where(squirrel.Eq{
-			"currency_id": currency_id,
-		}).
-		ToSql()
-	if err != nil {
-		return dberror.MapError(err)
-	}
-	stmt, err := txn.PrepareContext(ctx, query)
-	if err != nil {
-		return dberror.MapError(err)
-	}
-	if _, err = stmt.Exec(params...); err != nil {
-		return dberror.MapError(err)
-	}
-	return nil
+    query, params, err := squirrel.
+        Delete(CurrencyTableName).
+        Where(squirrel.Eq{
+            "currency_id": currency_id,
+        }).
+        ToSql()
+    if err != nil {
+        return dberror.MapError(err)
+    }
+    stmt, err := txn.PrepareContext(ctx, query)
+    if err != nil {
+        return dberror.MapError(err)
+    }
+    if _, err = stmt.Exec(params...); err != nil {
+        return dberror.MapError(err)
+    }
+    return nil
 }
+

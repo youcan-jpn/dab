@@ -2,185 +2,189 @@
 package daocore
 
 import (
-	"context"
-	"database/sql"
-	"strings"
+    "context"
+    "database/sql"
+    "strings"
+    "time"
 
-	"github.com/Masterminds/squirrel"
+    "github.com/Masterminds/squirrel"
 
-	"github.com/youcan-jpn/dab/backend/src/dberror"
-	"github.com/youcan-jpn/dab/backend/src/util/filter"
+    "github.com/youcan-jpn/dab/backend/src/dberror"
+    "github.com/youcan-jpn/dab/backend/src/util/filter"
 )
 
 const ProductTableName = "products"
 
 var ProductAllColumns = []string{
-	"receipt_id",
-	"product_id",
-	"product_name",
-	"price",
+    "receipt_id",
+    "product_id",
+    "product_name",
+    "price",
 }
 
 var ProductColumnsWOMagics = []string{
-	"receipt_id",
-	"product_id",
-	"product_name",
-	"price",
+    "receipt_id",
+    "product_id",
+    "product_name",
+    "price",
 }
 
 var ProductPrimaryKeyColumns = []string{
-	"receipt_id",
-	"product_id",
+    "receipt_id",
+    "product_id",
 }
 
 type Product struct {
-	ReceiptID   int
-	ProductID   int
-	ProductName string
-	Price       float32
+    ReceiptID int
+    ProductID int
+    ProductName string
+    Price float32
 }
 
 func (t *Product) Values() []interface{} {
-	return []interface{}{
-		t.ReceiptID,
-		t.ProductID,
-		t.ProductName,
-		t.Price,
-	}
+    return []interface{}{
+        t.ReceiptID,
+        t.ProductID,
+        t.ProductName,
+        t.Price,
+    }
 }
 
 func (t *Product) SetMap() map[string]interface{} {
-	return map[string]interface{}{
-		"receipt_id":   t.ReceiptID,
-		"product_id":   t.ProductID,
-		"product_name": t.ProductName,
-		"price":        t.Price,
-	}
+    return map[string]interface{}{
+        "receipt_id": t.ReceiptID,
+        "product_id": t.ProductID,
+        "product_name": t.ProductName,
+        "price": t.Price,
+    }
 }
 
 func (t *Product) Ptrs() []interface{} {
-	return []interface{}{
-		&t.ReceiptID,
-		&t.ProductID,
-		&t.ProductName,
-		&t.Price,
-	}
+    return []interface{}{
+        &t.ReceiptID,
+        &t.ProductID,
+        &t.ProductName,
+        &t.Price,
+    }
 }
 
-func IterateProduct(sc interface{ Scan(...interface{}) error }) (Product, error) {
-	t := Product{}
-	if err := sc.Scan(t.Ptrs()...); err != nil {
-		return Product{}, dberror.MapError(err)
-	}
-	return t, nil
+func IterateProduct(sc interface{ Scan(...interface{}) error}) (Product, error) {
+    t := Product{}
+    if err := sc.Scan(t.Ptrs()...); err != nil {
+        return Product{}, dberror.MapError(err)
+    }
+    return t, nil
 }
 
-func SelectOneProductByReceiptIDAndProductID(ctx context.Context, txn *sql.Tx, receipt_id *int, product_id *int) (Product, error) {
-	eq := squirrel.Eq{}
-	if receipt_id != nil {
-		eq["receipt_id"] = *receipt_id
-	}
-	if product_id != nil {
-		eq["product_id"] = *product_id
-	}
-	query, params, err := squirrel.
-		Select(ProductAllColumns...).
-		From(ProductTableName).
-		Where(eq).
-		ToSql()
-	if err != nil {
-		return Product{}, dberror.MapError(err)
-	}
-	stmt, err := txn.PrepareContext(ctx, query)
-	if err != nil {
-		return Product{}, dberror.MapError(err)
-	}
-	return IterateProduct(stmt.QueryRowContext(ctx, params...))
+func SelectOneProductByReceiptIDAndProductID(ctx context.Context, txn *sql.Tx, receipt_id *int,product_id *int) (Product, error) {
+    eq := squirrel.Eq{}
+    if receipt_id != nil {
+        eq["receipt_id"] = *receipt_id
+    }
+    if product_id != nil {
+        eq["product_id"] = *product_id
+    }
+    query, params, err := squirrel.
+        Select(ProductAllColumns...).
+        From(ProductTableName).
+        Where(eq).
+        ToSql()
+    if err != nil {
+        return Product{}, dberror.MapError(err)
+    }
+    stmt, err := txn.PrepareContext(ctx, query)
+    if err != nil {
+        return Product{}, dberror.MapError(err)
+    }
+    return IterateProduct(stmt.QueryRowContext(ctx, params...))
 }
+
+
 
 func InsertProduct(ctx context.Context, txn *sql.Tx, records []*Product) error {
-	records = filter.OmitNil[Product](records)
-	if len(records) == 0 {
-		return nil
-	}
-	sq := squirrel.Insert(ProductTableName).Columns(ProductColumnsWOMagics...)
-	for _, r := range records {
-		if r == nil {
-			continue
-		}
-		sq = sq.Values(r.Values()...)
-	}
-	query, params, err := sq.ToSql()
-	if err != nil {
-		return err
-	}
-	stmt, err := txn.PrepareContext(ctx, query)
-	if err != nil {
-		return dberror.MapError(err)
-	}
-	if _, err = stmt.Exec(params...); err != nil {
-		return dberror.MapError(err)
-	}
-	return nil
+    records = filter.OmitNil[Product](records)
+    if len(records) == 0 {
+        return nil
+    }
+    sq := squirrel.Insert(ProductTableName).Columns(ProductColumnsWOMagics...)
+    for _, r := range records {
+        if r == nil {
+            continue
+        }
+        sq = sq.Values(r.Values()...)
+    }
+    query, params, err := sq.ToSql()
+    if err != nil {
+        return err
+    }
+    stmt, err := txn.PrepareContext(ctx, query)
+    if err != nil {
+        return dberror.MapError(err)
+    }
+    if _, err = stmt.Exec(params...); err != nil {
+        return dberror.MapError(err)
+    }
+    return nil
 }
 
 func UpdateProduct(ctx context.Context, txn *sql.Tx, record Product) error {
-	sql, params, err := squirrel.Update(ProductTableName).SetMap(record.SetMap()).
-		Where(squirrel.Eq{
-			"receipt_id": record.ReceiptID,
-			"product_id": record.ProductID,
-		}).
-		ToSql()
-	if err != nil {
-		return err
-	}
-	stmt, err := txn.PrepareContext(ctx, sql)
-	if err != nil {
-		return dberror.MapError(err)
-	}
-	if _, err = stmt.Exec(params...); err != nil {
-		return dberror.MapError(err)
-	}
-	return nil
+    sql, params, err := squirrel.Update(ProductTableName).SetMap(record.SetMap()).
+        Where(squirrel.Eq{
+        "receipt_id": record.ReceiptID,
+        "product_id": record.ProductID,
+    }).
+        ToSql()
+    if err != nil {
+        return err
+    }
+    stmt, err := txn.PrepareContext(ctx, sql)
+    if err != nil {
+        return dberror.MapError(err)
+    }
+    if _, err = stmt.Exec(params...); err != nil {
+        return dberror.MapError(err)
+    }
+    return nil
 }
 
 func UpsertProduct(ctx context.Context, txn *sql.Tx, record Product) error {
-	updateSQL, params, err := squirrel.Update(ProductTableName).SetMap(record.SetMap()).ToSql()
-	if err != nil {
-		return err
-	}
-	updateSQL = strings.TrimPrefix(updateSQL, "UPDATE "+ProductTableName+" SET ")
-	query, params, err := squirrel.Insert(ProductTableName).Columns(ProductColumnsWOMagics...).Values(record.Values()...).SuffixExpr(squirrel.Expr("ON DUPLICATE KEY UPDATE "+updateSQL, params...)).ToSql()
-	if err != nil {
-		return err
-	}
-	stmt, err := txn.PrepareContext(ctx, query)
-	if err != nil {
-		return dberror.MapError(err)
-	}
-	if _, err = stmt.Exec(params...); err != nil {
-		return dberror.MapError(err)
-	}
-	return nil
+    updateSQL, params, err := squirrel.Update(ProductTableName).SetMap(record.SetMap()).ToSql()
+    if err != nil {
+        return err
+    }
+    updateSQL = strings.TrimPrefix(updateSQL, "UPDATE "+ProductTableName+" SET ")
+    query, params, err := squirrel.Insert(ProductTableName).Columns(ProductColumnsWOMagics...).Values(record.Values()...).SuffixExpr(squirrel.Expr("ON DUPLICATE KEY UPDATE "+updateSQL, params...)).ToSql()
+    if err != nil {
+        return err
+    }
+    stmt, err := txn.PrepareContext(ctx, query)
+    if err != nil {
+        return dberror.MapError(err)
+    }
+    if _, err = stmt.Exec(params...); err != nil {
+        return dberror.MapError(err)
+    }
+    return nil
 }
 
-func DeleteOneProductByReceiptIDAndProductID(ctx context.Context, txn *sql.Tx, receipt_id int, product_id int) error {
-	query, params, err := squirrel.
-		Delete(ProductTableName).
-		Where(squirrel.Eq{
-			"receipt_id": receipt_id,
-			"product_id": product_id,
-		}).
-		ToSql()
-	if err != nil {
-		return dberror.MapError(err)
-	}
-	stmt, err := txn.PrepareContext(ctx, query)
-	if err != nil {
-		return dberror.MapError(err)
-	}
-	if _, err = stmt.Exec(params...); err != nil {
-		return dberror.MapError(err)
-	}
-	return nil
+func DeleteOneProductByReceiptIDAndProductID(ctx context.Context, txn *sql.Tx, receipt_id int,product_id int) error {
+    query, params, err := squirrel.
+        Delete(ProductTableName).
+        Where(squirrel.Eq{
+            "receipt_id": receipt_id,
+            "product_id": product_id,
+        }).
+        ToSql()
+    if err != nil {
+        return dberror.MapError(err)
+    }
+    stmt, err := txn.PrepareContext(ctx, query)
+    if err != nil {
+        return dberror.MapError(err)
+    }
+    if _, err = stmt.Exec(params...); err != nil {
+        return dberror.MapError(err)
+    }
+    return nil
 }
+

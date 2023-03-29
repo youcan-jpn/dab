@@ -89,7 +89,7 @@ func (c Column) GoType() string {
 }
 
 func (c Column) IsMagicColumn() bool {
-	return (c.Name == "created_at" && c.Datatype.Type == TimeStamp) || (c.Name == "updated_at" && c.Datatype.Type == TimeStamp)
+	return (c.Name == "created_at" && c.Datatype.Type == TimeStamp) || (c.Name == "updated_at" && c.Datatype.Type == TimeStamp) || (c.Name == "modified_at" && c.Datatype.Type == TimeStamp)
 }
 
 type Index struct {
