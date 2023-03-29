@@ -20,7 +20,7 @@
               "name": "category_name",
               "datatype": {
                 "type": "varchar",
-                "prec": 15
+                "prec": 50
               }
             }
           ],
@@ -42,7 +42,7 @@
                   "name": "category_name",
                   "datatype": {
                     "type": "varchar",
-                    "prec": 15
+                    "prec": 50
                   }
                 }
               ]

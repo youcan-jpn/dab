@@ -314,9 +314,12 @@ components:
         created_at:
           $ref: "#/components/schemas/timestamp"
     currencies:
-      type: array
-      items:
-        $ref: "#/components/schemas/currency"
+      type: object
+      properties:
+        currencies:
+          type: array
+          items:
+            $ref: "#/components/schemas/currency"
     # カテゴリ関連
     category_id:
       type: integer
@@ -332,9 +335,12 @@ components:
         category_name:
           $ref: "#/components/schemas/category_name"
     categories:
-      type: array
-      items:
-        $ref: "#/components/schemas/category"
+      type: object
+      properties:
+        categories:
+          type: array
+          items:
+            $ref: "#/components/schemas/category"
   responses:
     ReceiptListRes:
       description: 条件を満たすレシートの一覧

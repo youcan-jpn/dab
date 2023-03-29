@@ -4,7 +4,9 @@
 package oapi
 
 // Categories defines model for categories.
-type Categories = []Category
+type Categories struct {
+	Categories *[]Category `json:"categories,omitempty"`
+}
 
 // Category defines model for category.
 type Category struct {
@@ -22,7 +24,9 @@ type CategoryId = int
 type CategoryName = string
 
 // Currencies defines model for currencies.
-type Currencies = []Currency
+type Currencies struct {
+	Currencies *[]Currency `json:"currencies,omitempty"`
+}
 
 // Currency defines model for currency.
 type Currency struct {

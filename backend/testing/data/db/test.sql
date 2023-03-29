@@ -2,6 +2,7 @@ DELETE FROM products;
 DELETE FROM receipts;
 DELETE FROM shops;
 DELETE FROM currencies;
+DELETE FROM categories;
 
 INSERT INTO shops (
     shop_id,  -- 実際はAUTO_INCREMENT
@@ -42,10 +43,10 @@ INSERT INTO categories (
 )
 VALUES (
     1,
-    "食費"
+    N'食費'
 ), (
     2,
-    "娯楽費"
+    N'娯楽費'
 );
 
 INSERT INTO receipts (
