@@ -172,8 +172,12 @@ func GetCurrencies(ctx context.Context, txn *sql.Tx) ([]*daocore.Currency, error
 	return daocore.SelectCurrencyByInYen(ctx, txn, nil)
 }
 
-func PostCurrency(ctx context.Context, txn *sql.Tx, currency_name string, in_yen float32) error {
-	return daocore.InsertCurrency(ctx, txn, []*daocore.Currency{{CurrencyID: 0, CurrencyName: currency_name, InYen: in_yen}})
+func GetOneCurrencyByID(ctx context.Context, txn *sql.Tx, currency_id int) (daocore.Currency, error) {
+	return daocore.SelectOneCurrencyByCurrencyID(ctx, txn, &currency_id)
+}
+
+func PostCurrency(ctx context.Context, txn *sql.Tx, currency_name string, in_yen float32) (sql.Result, error) {
+	return dao.InsertOneCurrencyReturningResult(ctx, txn, &daocore.Currency{CurrencyID: 0, CurrencyName: currency_name, InYen: in_yen})
 }
 
 func PatchCurrency(ctx context.Context, txn *sql.Tx, currency_id int, currency_name string, in_yen float32) error {
