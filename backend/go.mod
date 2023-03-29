@@ -8,7 +8,11 @@ require (
 	github.com/gertd/go-pluralize v0.2.1
 	github.com/getkin/kin-openapi v0.115.0
 	github.com/go-sql-driver/mysql v1.7.0
+	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/labstack/echo/v4 v4.10.2
+	github.com/tommy351/zap-stackdriver v0.1.4
+	go.uber.org/zap v1.24.0
+	golang.org/x/sync v0.1.0
 )
 
 require (
@@ -28,6 +32,8 @@ require (
 	github.com/perimeterx/marshmallow v1.1.4 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.2 // indirect
+	go.uber.org/atomic v1.7.0 // indirect
+	go.uber.org/multierr v1.6.0 // indirect
 	golang.org/x/crypto v0.6.0 // indirect
 	golang.org/x/net v0.7.0 // indirect
 	golang.org/x/sys v0.5.0 // indirect

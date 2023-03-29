@@ -2,6 +2,7 @@ version: '3'
 services:
   db:
     image: mysql:latest
+    container_name: dab-db
     restart: "no"
     environment:
       MYSQL_USER: dab_user
