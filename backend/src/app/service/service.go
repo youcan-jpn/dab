@@ -13,18 +13,18 @@ import (
 )
 
 type Receipt struct {
-	ReceiptID int
-	ShopID int
-	CurrencyID int
-	TotalPrice float32
+	ReceiptID     int
+	ShopID        int
+	CurrencyID    int
+	TotalPrice    float32
 	purchase_date *time.Time
-	Products []*Product
+	Products      []*Product
 }
 
 type Product struct {
-	ProductID int
+	ProductID   int
 	ProductName string
-	Price float32
+	Price       float32
 }
 
 func (p Product) ToDAOProduct(rid int) (*daocore.Product, error) {
@@ -38,10 +38,10 @@ func (p Product) ToDAOProduct(rid int) (*daocore.Product, error) {
 		return &daocore.Product{}, fmt.Errorf("'price' has to be positive")
 	}
 	return &daocore.Product{
-		ReceiptID: rid,
-		ProductID: p.ProductID,
+		ReceiptID:   rid,
+		ProductID:   p.ProductID,
 		ProductName: p.ProductName,
-		Price: p.Price,
+		Price:       p.Price,
 	}, nil
 }
 
@@ -64,10 +64,10 @@ func PostReceipt(ctx context.Context, txn *sql.Tx, shop_id int, currency_id int,
 	}
 
 	r := daocore.Receipt{
-		ReceiptID: 0,
-		ShopID: shop_id,
-		CurrencyID: currency_id,
-		TotalPrice: total_price,
+		ReceiptID:    0,
+		ShopID:       shop_id,
+		CurrencyID:   currency_id,
+		TotalPrice:   total_price,
 		PurchaseDate: purchase_date,
 	}
 
@@ -107,10 +107,10 @@ func GetReceipts(ctx context.Context, txn *sql.Tx, receipt_id int) ([]*dao.Recei
 
 func PatchReceipt(ctx context.Context, txn *sql.Tx, rec Receipt) error {
 	r := daocore.Receipt{
-		ReceiptID: rec.ReceiptID,
-		ShopID: rec.ShopID,
-		CurrencyID: rec.CurrencyID,
-		TotalPrice: rec.TotalPrice,
+		ReceiptID:    rec.ReceiptID,
+		ShopID:       rec.ShopID,
+		CurrencyID:   rec.CurrencyID,
+		TotalPrice:   rec.TotalPrice,
 		PurchaseDate: rec.purchase_date,
 	}
 	err := daocore.UpsertReceipt(ctx, txn, r)
@@ -144,12 +144,15 @@ func DeleteReceipt(ctx context.Context, txn *sql.Tx, receipt_id int) error {
 }
 
 // Shops
+func GetOneShopByID(ctx context.Context, txn *sql.Tx, shop_id int) (daocore.Shop, error) {
+	return daocore.SelectOneShopByShopID(ctx, txn, &shop_id)
+}
 func GetShops(ctx context.Context, txn *sql.Tx) ([]*daocore.Shop, error) {
 	return daocore.SelectShopByShopName(ctx, txn, nil)
 }
 
-func PostShop(ctx context.Context, txn *sql.Tx, shop_name string) error {
-	return daocore.InsertShop(ctx, txn, []*daocore.Shop{{ShopID: 0, ShopName: shop_name}})
+func PostShop(ctx context.Context, txn *sql.Tx, shop_name string) (sql.Result, error) {
+	return dao.InsertOneShopReturningResult(ctx, txn, &daocore.Shop{ShopID: 0, ShopName: shop_name})
 }
 
 func PatchShop(ctx context.Context, txn *sql.Tx, shop_id int, shop_name string) error {
@@ -158,7 +161,6 @@ func PatchShop(ctx context.Context, txn *sql.Tx, shop_id int, shop_name string) 
 	}
 	return fmt.Errorf("'shop_id' and 'shop_name' have to be set")
 }
-
 
 // Currencies
 func GetCurrencies(ctx context.Context, txn *sql.Tx) ([]*daocore.Currency, error) {
@@ -170,7 +172,7 @@ func PostCurrency(ctx context.Context, txn *sql.Tx, currency_name string, in_yen
 }
 
 func PatchCurrency(ctx context.Context, txn *sql.Tx, currency_id int, currency_name string, in_yen float32) error {
-	if currency_id > 0 && len(currency_name) == 3{
+	if currency_id > 0 && len(currency_name) == 3 {
 		return daocore.UpsertCurrency(ctx, txn, daocore.Currency{CurrencyID: currency_id, CurrencyName: currency_name, InYen: in_yen})
 	}
 	return fmt.Errorf("'currency_id' and 'currency_name' (len=3) have to be set")
