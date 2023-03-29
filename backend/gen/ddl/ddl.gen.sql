@@ -1,5 +1,5 @@
 -- Project Name : dab-database
--- Date/Time    : 2023/03/28 23:17:25
+-- Date/Time    : 2023/03/29 21:44:36
 -- Author       : Yuta Ono
 -- RDBMS Type   : MySQL
 -- Application  : A5:SQL Mk-2
@@ -12,74 +12,74 @@
   この機能は A5:SQL Mk-2でのみ有効であることに注意してください。
 */
 
--- shops
---* BackupToTempTable
-drop table if exists shops cascade;
-
+-- categories
 --* RestoreFromTempTable
-create table shops (
-  shop_id INT not null auto_increment comment 'shop_id'
-  , shop_name VARCHAR(100) not null comment 'shop_name'
-  , modified_at TIMESTAMP default current_timestamp on update current_timestamp not null comment 'modified_at'
-  , created_at TIMESTAMP default current_timestamp not null comment 'created_at'
-  , constraint shops_PKC primary key (shop_id)
-) comment 'shops' ;
+CREATE TABLE categories (
+  category_id INT NOT NULL auto_increment COMMENT 'category_id'
+  , category_name VARCHAR(15) NOT NULL COMMENT 'category_name'
+  , CONSTRAINT categories_PKC PRIMARY KEY (category_id)
+) COMMENT 'categories' ;
+
+-- shops
+--* RestoreFromTempTable
+CREATE TABLE shops (
+  shop_id INT NOT NULL auto_increment COMMENT 'shop_id'
+  , shop_name VARCHAR(100) NOT NULL COMMENT 'shop_name'
+  , modified_at TIMESTAMP DEFAULT current_timestamp on update current_timestamp NOT NULL COMMENT 'modified_at'
+  , created_at TIMESTAMP DEFAULT current_timestamp NOT NULL COMMENT 'created_at'
+  , CONSTRAINT shops_PKC PRIMARY KEY (shop_id)
+) COMMENT 'shops' ;
 
 -- currencies
---* BackupToTempTable
-drop table if exists currencies cascade;
-
 --* RestoreFromTempTable
-create table currencies (
-  currency_id INT not null auto_increment comment 'currency_id'
-  , currency_name CHAR(3) not null comment 'currency_name'
-  , in_yen FLOAT not null comment 'in_yen'
-  , modified_at TIMESTAMP default current_timestamp on update current_timestamp not null comment 'modified_at'
-  , created_at TIMESTAMP default current_timestamp not null comment 'created_at'
-  , constraint currencies_PKC primary key (currency_id)
-) comment 'currencies' ;
+CREATE TABLE currencies (
+  currency_id INT NOT NULL auto_increment COMMENT 'currency_id'
+  , currency_name CHAR(3) NOT NULL COMMENT 'currency_name'
+  , in_yen FLOAT NOT NULL COMMENT 'in_yen'
+  , modified_at TIMESTAMP DEFAULT current_timestamp on update current_timestamp NOT NULL COMMENT 'modified_at'
+  , created_at TIMESTAMP DEFAULT current_timestamp NOT NULL COMMENT 'created_at'
+  , CONSTRAINT currencies_PKC PRIMARY KEY (currency_id)
+) COMMENT 'currencies' ;
 
 -- products
---* BackupToTempTable
-drop table if exists products cascade;
-
 --* RestoreFromTempTable
-create table products (
-  receipt_id INT not null comment 'receipt_id'
-  , product_id INT not null comment 'product_id'
-  , product_name VARCHAR(100) not null comment 'product_name'
-  , price FLOAT not null comment 'price'
-  , constraint products_PKC primary key (receipt_id,product_id)
-) comment 'products' ;
+CREATE TABLE products (
+  receipt_id INT NOT NULL COMMENT 'receipt_id'
+  , product_id INT NOT NULL COMMENT 'product_id'
+  , product_name VARCHAR(100) NOT NULL COMMENT 'product_name'
+  , price FLOAT NOT NULL COMMENT 'price'
+  , CONSTRAINT products_PKC PRIMARY KEY (receipt_id,product_id)
+) COMMENT 'products' ;
 
 -- receipts
---* BackupToTempTable
-drop table if exists receipts cascade;
-
 --* RestoreFromTempTable
-create table receipts (
-  receipt_id INT not null auto_increment comment 'receipt_id'
-  , shop_id INT not null comment 'shop_id'
-  , currency_id INT not null comment 'currency_id'
-  , total_price FLOAT not null comment 'total_price'
-  , purchase_date DATE not null comment 'purchase_date'
-  , modified_at TIMESTAMP default current_timestamp on update current_timestamp not null comment 'modified_at'
-  , created_at TIMESTAMP default current_timestamp not null comment 'created_at'
-  , constraint receipts_PKC primary key (receipt_id)
-) comment 'receipts' ;
+CREATE TABLE receipts (
+  receipt_id INT NOT NULL auto_increment COMMENT 'receipt_id'
+  , shop_id INT NOT NULL COMMENT 'shop_id'
+  , currency_id INT NOT NULL COMMENT 'currency_id'
+  , category_id INT NOT NULL COMMENT 'category_id'
+  , total_price FLOAT NOT NULL COMMENT 'total_price'
+  , purchase_date DATE NOT NULL COMMENT 'purchase_date'
+  , modified_at TIMESTAMP DEFAULT current_timestamp on update current_timestamp NOT NULL COMMENT 'modified_at'
+  , created_at TIMESTAMP DEFAULT current_timestamp NOT NULL COMMENT 'created_at'
+  , CONSTRAINT receipts_PKC PRIMARY KEY (receipt_id)
+) COMMENT 'receipts' ;
 
-create index receipts_IX1
-  on receipts(total_price);
+CREATE INDEX receipts_IX1
+  ON receipts(total_price);
 
-create index receipts_IX2
-  on receipts(purchase_date);
+CREATE INDEX receipts_IX2
+  ON receipts(purchase_date);
 
-alter table receipts
-  add constraint receipts_FK1 foreign key (currency_id) references currencies(currency_id);
+ALTER TABLE receipts
+  ADD CONSTRAINT receipts_FK1 FOREIGN KEY (category_id) REFERENCES categories(category_id);
 
-alter table receipts
-  add constraint receipts_FK2 foreign key (shop_id) references shops(shop_id);
+ALTER TABLE receipts
+  ADD CONSTRAINT receipts_FK2 FOREIGN KEY (currency_id) REFERENCES currencies(currency_id);
 
-alter table products
-  add constraint products_FK1 foreign key (receipt_id) references receipts(receipt_id);
+ALTER TABLE receipts
+  ADD CONSTRAINT receipts_FK3 FOREIGN KEY (shop_id) REFERENCES shops(shop_id);
+
+ALTER TABLE products
+  ADD CONSTRAINT products_FK1 FOREIGN KEY (receipt_id) REFERENCES receipts(receipt_id);
 

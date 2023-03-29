@@ -19,6 +19,7 @@ var ReceiptAllColumns = []string{
 	"receipt_id",
 	"shop_id",
 	"currency_id",
+	"category_id",
 	"total_price",
 	"purchase_date",
 	"modified_at",
@@ -29,6 +30,7 @@ var ReceiptColumnsWOMagics = []string{
 	"receipt_id",
 	"shop_id",
 	"currency_id",
+	"category_id",
 	"total_price",
 	"purchase_date",
 }
@@ -41,6 +43,7 @@ type Receipt struct {
 	ReceiptID    int
 	ShopID       int
 	CurrencyID   int
+	CategoryID   int
 	TotalPrice   float32
 	PurchaseDate *time.Time
 	ModifiedAt   *time.Time
@@ -52,6 +55,7 @@ func (t *Receipt) Values() []interface{} {
 		t.ReceiptID,
 		t.ShopID,
 		t.CurrencyID,
+		t.CategoryID,
 		t.TotalPrice,
 		t.PurchaseDate,
 	}
@@ -62,6 +66,7 @@ func (t *Receipt) SetMap() map[string]interface{} {
 		"receipt_id":    t.ReceiptID,
 		"shop_id":       t.ShopID,
 		"currency_id":   t.CurrencyID,
+		"category_id":   t.CategoryID,
 		"total_price":   t.TotalPrice,
 		"purchase_date": t.PurchaseDate,
 	}
@@ -72,6 +77,7 @@ func (t *Receipt) Ptrs() []interface{} {
 		&t.ReceiptID,
 		&t.ShopID,
 		&t.CurrencyID,
+		&t.CategoryID,
 		&t.TotalPrice,
 		&t.PurchaseDate,
 		&t.ModifiedAt,
@@ -85,6 +91,38 @@ func IterateReceipt(sc interface{ Scan(...interface{}) error }) (Receipt, error)
 		return Receipt{}, dberror.MapError(err)
 	}
 	return t, nil
+}
+
+func SelectReceiptByCategoryID(ctx context.Context, txn *sql.Tx, category_id *int) ([]*Receipt, error) {
+	eq := squirrel.Eq{}
+	if category_id != nil {
+		eq["category_id"] = *category_id
+	}
+	query, params, err := squirrel.
+		Select(ReceiptAllColumns...).
+		From(ReceiptTableName).
+		Where(eq).
+		ToSql()
+	if err != nil {
+		return nil, dberror.MapError(err)
+	}
+	stmt, err := txn.PrepareContext(ctx, query)
+	if err != nil {
+		return nil, dberror.MapError(err)
+	}
+	rows, err := stmt.QueryContext(ctx, params...)
+	if err != nil {
+		return nil, dberror.MapError(err)
+	}
+	res := make([]*Receipt, 0)
+	for rows.Next() {
+		t, err := IterateReceipt(rows)
+		if err != nil {
+			return nil, dberror.MapError(err)
+		}
+		res = append(res, &t)
+	}
+	return res, nil
 }
 
 func SelectReceiptByCurrencyID(ctx context.Context, txn *sql.Tx, currency_id *int) ([]*Receipt, error) {
@@ -289,6 +327,26 @@ func UpsertReceipt(ctx context.Context, txn *sql.Tx, record Receipt) error {
 	query, params, err := squirrel.Insert(ReceiptTableName).Columns(ReceiptColumnsWOMagics...).Values(record.Values()...).SuffixExpr(squirrel.Expr("ON DUPLICATE KEY UPDATE "+updateSQL, params...)).ToSql()
 	if err != nil {
 		return err
+	}
+	stmt, err := txn.PrepareContext(ctx, query)
+	if err != nil {
+		return dberror.MapError(err)
+	}
+	if _, err = stmt.Exec(params...); err != nil {
+		return dberror.MapError(err)
+	}
+	return nil
+}
+
+func DeleteReceiptByCategoryID(ctx context.Context, txn *sql.Tx, category_id int) error {
+	query, params, err := squirrel.
+		Delete(ReceiptTableName).
+		Where(squirrel.Eq{
+			"category_id": category_id,
+		}).
+		ToSql()
+	if err != nil {
+		return dberror.MapError(err)
 	}
 	stmt, err := txn.PrepareContext(ctx, query)
 	if err != nil {

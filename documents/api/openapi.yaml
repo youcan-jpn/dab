@@ -19,6 +19,8 @@ tags:
     description: 店の情報にアクセスする
   - name: Currencies
     description: 通貨の情報にアクセスする
+  - name: Categories
+    description: 用途カテゴリの情報にアクセスする
 
 paths:
   /receipts:
@@ -133,7 +135,6 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/NewOrUpdatedCurrencyRes"
-
   /currencies/{currency_id}:
     patch:
       tags:
@@ -150,6 +151,40 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/NewOrUpdatedCurrencyRes"
+
+  /categories:
+    get:
+      tags:
+        - Categories
+      summary: カテゴリ情報を取得
+      responses:
+        "200":
+          $ref: "#/components/responses/CategoryListRes"
+    post:
+      tags:
+        - Categories
+      summary: カテゴリ情報を登録
+      requestBody:
+        $ref: "#/components/requestBodies/NewOrUpdatedCategory"
+      responses:
+        "200":
+          $ref: "#/components/responses/NewOrUpdatedCategoryRes"
+  /categories/{category_id}:
+    patch:
+      tags:
+        - Categories
+      summary: カテゴリ情報を更新
+      parameters:
+        - in: path
+          name: category_id
+          required: true
+          schema:
+            $ref: "#/components/schemas/category_id"
+      requestBody:
+        $ref: "#/components/requestBodies/NewOrUpdatedCategory"
+      responses:
+        "200":
+          $ref: "#/components/responses/NewOrUpdatedCategoryRes"
 components:
   schemas:
     shop_id:
@@ -237,6 +272,10 @@ components:
           $ref: "#/components/schemas/currency_id"
         currency_name:
           $ref: "#/components/schemas/currency_name"
+        category_id:
+          $ref: "#/components/schemas/category_id"
+        category_name:
+          $ref: "#/components/schemas/category_name"
         purchase_date:
           $ref: "#/components/schemas/date"
         total_price:
@@ -278,6 +317,24 @@ components:
       type: array
       items:
         $ref: "#/components/schemas/currency"
+    # カテゴリ関連
+    category_id:
+      type: integer
+      description: カテゴリID
+    category_name:
+      type: string
+      description: カテゴリ名
+    category:
+      type: object
+      properties:
+        category_id:
+          $ref: "#/components/schemas/category_id"
+        category_name:
+          $ref: "#/components/schemas/category_name"
+    categories:
+      type: array
+      items:
+        $ref: "#/components/schemas/category"
   responses:
     ReceiptListRes:
       description: 条件を満たすレシートの一覧
@@ -316,6 +373,19 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/currencies"
+    # カテゴリ関連
+    NewOrUpdatedCategoryRes:
+      description: 新規登録もしくは更新された通貨情報
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/category"
+    CategoryListRes:
+      description: カテゴリ情報
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/categories"
   requestBodies:
     ReceiptConditions:
       required: false
@@ -328,6 +398,8 @@ components:
                 $ref: "#/components/schemas/shop_id"
               currency_id:
                 $ref: "#/components/schemas/currency_id"
+              category_id:
+                $ref: "#/components/schemas/category_id"
               min_price:
                 $ref: "#/components/schemas/price"
               max_price:
@@ -358,6 +430,8 @@ components:
                 $ref: "#/components/schemas/shop_id"
               currency_id:
                 $ref: "#/components/schemas/currency_id"
+              category_id:
+                $ref: "#/components/schemas/category_id"
               purchase_date:
                 $ref: "#/components/schemas/date"
               products:
@@ -374,3 +448,13 @@ components:
                 $ref: "#/components/schemas/currency_id"
               in_yen:
                 $ref: "#/components/schemas/in_yen"
+    NewOrUpdatedCategory:
+      required: true
+      description: 新しいカテゴリ情報 
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              category_name:
+                $ref: "#/components/schemas/category_name"
