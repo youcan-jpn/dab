@@ -26,9 +26,13 @@ func (a *API) GetShops(ctx echo.Context) error {
 
 	sas := make([]oapi.Shop, 0, len(ss))
 	for _, s := range ss {
+		ma := timeToString(s.ModifiedAt)
+		ca := timeToString(s.CreatedAt)
 		sa := oapi.Shop{
 			ShopId:   &s.ShopID,
 			ShopName: &s.ShopName,
+			ModifiedAt: &ma,
+			CreatedAt: &ca,
 		}
 		sas = append(sas, sa)
 	}
