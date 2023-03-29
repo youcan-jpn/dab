@@ -74,7 +74,7 @@ type InYen = Price
 type Month = int
 
 // Price 金額
-type Price = int
+type Price = float32
 
 // Product 商品リストの1要素
 type Product struct {
@@ -194,8 +194,8 @@ type NewOrUpdatedCategory struct {
 
 // NewOrUpdatedCurrency defines model for NewOrUpdatedCurrency.
 type NewOrUpdatedCurrency struct {
-	// CurrencyName 通貨ID
-	CurrencyName *CurrencyId `json:"currency_name,omitempty"`
+	// CurrencyName 通貨名
+	CurrencyName *CurrencyName `json:"currency_name,omitempty"`
 
 	// InYen 金額
 	InYen *InYen `json:"in_yen,omitempty"`
@@ -261,8 +261,8 @@ type PatchCategoriesCategoryIdJSONBody struct {
 
 // PostCurrenciesJSONBody defines parameters for PostCurrencies.
 type PostCurrenciesJSONBody struct {
-	// CurrencyName 通貨ID
-	CurrencyName *CurrencyId `json:"currency_name,omitempty"`
+	// CurrencyName 通貨名
+	CurrencyName *CurrencyName `json:"currency_name,omitempty"`
 
 	// InYen 金額
 	InYen *InYen `json:"in_yen,omitempty"`
@@ -270,8 +270,8 @@ type PostCurrenciesJSONBody struct {
 
 // PatchCurrenciesCurrencyIdJSONBody defines parameters for PatchCurrenciesCurrencyId.
 type PatchCurrenciesCurrencyIdJSONBody struct {
-	// CurrencyName 通貨ID
-	CurrencyName *CurrencyId `json:"currency_name,omitempty"`
+	// CurrencyName 通貨名
+	CurrencyName *CurrencyName `json:"currency_name,omitempty"`
 
 	// InYen 金額
 	InYen *InYen `json:"in_yen,omitempty"`

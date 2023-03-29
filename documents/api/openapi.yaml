@@ -216,7 +216,7 @@ components:
       type: string
       description: 時刻あり日付
     price:
-      type: integer
+      type: number
       description: 金額
     receipt_id:
       type: integer
@@ -451,7 +451,7 @@ components:
             type: object
             properties:
               currency_name:
-                $ref: "#/components/schemas/currency_id"
+                $ref: "#/components/schemas/currency_name"
               in_yen:
                 $ref: "#/components/schemas/in_yen"
     NewOrUpdatedCategory:
