@@ -182,3 +182,19 @@ func PatchCurrency(ctx context.Context, txn *sql.Tx, currency_id int, currency_n
 	}
 	return fmt.Errorf("'currency_id' and 'currency_name' (len=3) have to be set")
 }
+
+// Categories
+func GetCategories(ctx context.Context, txn *sql.Tx) ([]*daocore.Category, error) {
+	return daocore.SelectCategoryByCategoryName(ctx, txn, nil)
+}
+
+func PostCategory(ctx context.Context, txn *sql.Tx, category_name string) error {
+	return daocore.InsertCategory(ctx, txn, []*daocore.Category{{CategoryID: 0, CategoryName: category_name}})
+}
+
+func PatchCategory(ctx context.Context, txn *sql.Tx, category_id int, category_name string) error {
+	if category_id > 0 && len(category_name) > 0{
+		return daocore.UpsertCategory(ctx, txn, daocore.Category{CategoryID: category_id, CategoryName: category_name})
+	}
+	return fmt.Errorf("'category_id' and 'category_name' have to be set")
+}
