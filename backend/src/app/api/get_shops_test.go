@@ -28,32 +28,32 @@ var createdAt2 = "2011-01-02 02:00:00"
 
 var wantRes1 = []oapi.Shop{
 	{
-		ShopId: &shopID1,
-		ShopName: &shopName1,
+		ShopId:     &shopID1,
+		ShopName:   &shopName1,
 		ModifiedAt: &modifiedAt1,
-		CreatedAt: &createdAt1,
+		CreatedAt:  &createdAt1,
 	},
 	{
-		ShopId: &shopID2,
-		ShopName: &shopName2,
+		ShopId:     &shopID2,
+		ShopName:   &shopName2,
 		ModifiedAt: &modifiedAt2,
-		CreatedAt: &createdAt2,
+		CreatedAt:  &createdAt2,
 	},
 }
 
 var getShopsCases = []struct {
-	name string
+	name    string
 	reqPath string
 	reqBody string
-	wantSC int  // status code
+	wantSC  int // status code
 	wantRes oapi.Shops
 	wantErr bool
-} {
+}{
 	{
-		name: "successful case",
+		name:    "successful case",
 		reqPath: "/shops",
 		reqBody: "",
-		wantSC: http.StatusOK,
+		wantSC:  http.StatusOK,
 		wantRes: oapi.Shops{
 			Shops: &wantRes1,
 		},
