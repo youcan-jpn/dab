@@ -9,6 +9,7 @@ import (
 
 	"github.com/Masterminds/squirrel"
 
+	"github.com/youcan-jpn/dab/backend/gen/daocore"
 	"github.com/youcan-jpn/dab/backend/src/dberror"
 )
 
@@ -115,11 +116,14 @@ func IterateReceiptDetail(sc interface{ Scan(...interface{}) error }) (ReceiptDe
 	return t, nil
 }
 
-func SelectReceiptDetailsByShopIDAndCurrencyIDAndTimeRangeAndPriceRange(ctx context.Context, txn *sql.Tx, shop_id int, currency_id int, min_price float32, max_price float32, since *time.Time, until *time.Time) ([]*ReceiptDetail, error) {
+func SelectReceiptDetailsByConditions(ctx context.Context, txn *sql.Tx, receipt_id int, shop_id int, currency_id int, min_price float32, max_price float32, since *time.Time, until *time.Time) ([]*ReceiptDetail, error) {
 	eq := squirrel.Eq{}
 	geq := squirrel.GtOrEq{}
 	leq := squirrel.LtOrEq{}
 
+	if receipt_id > 0 {
+		eq["r.receipt_id"] = receipt_id
+	}
 	if shop_id > 0 {
 		eq["s.shop_id"] = shop_id
 	}
@@ -182,4 +186,24 @@ func SelectReceiptDetailsByShopIDAndCurrencyIDAndTimeRangeAndPriceRange(ctx cont
 		res = append(res, &t)
 	}
 	return res, nil
+}
+
+func InsertOneReceiptReturningResult(ctx context.Context, txn *sql.Tx, receipt *daocore.Receipt) (sql.Result, error) {
+	query, params, err := squirrel.
+		Insert(daocore.ReceiptTableName).
+		Columns(daocore.ReceiptColumnsWOMagics...).
+		Values(receipt.Values()...).
+		ToSql()
+	if err != nil {
+		return nil, err
+	}
+	stmt, err := txn.PrepareContext(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+	r, err := stmt.Exec(params...)
+	if err != nil {
+		return nil, dberror.MapError(err)
+	}
+	return r, nil
 }
