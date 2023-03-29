@@ -36,10 +36,23 @@ VALUES (
     142.25
 );
 
+INSERT INTO categories (
+    category_id,
+    category_name
+)
+VALUES (
+    1,
+    "食費"
+), (
+    2,
+    "娯楽費"
+);
+
 INSERT INTO receipts (
     receipt_id,  -- 実際はAUTO_INCREMENT
     shop_id,
     currency_id,
+    category_id,
     total_price,
     purchase_date
 )
@@ -47,9 +60,11 @@ VALUES (
     1,
     1,
     1,
+    1,
     900,
     "2022-03-01"
 ), (
+    2,
     2,
     2,
     2,

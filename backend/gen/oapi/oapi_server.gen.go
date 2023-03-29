@@ -13,6 +13,15 @@ import (
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
+	// カテゴリ情報を取得
+	// (GET /categories)
+	GetCategories(ctx echo.Context) error
+	// カテゴリ情報を登録
+	// (POST /categories)
+	PostCategories(ctx echo.Context) error
+	// カテゴリ情報を更新
+	// (PATCH /categories/{category_id})
+	PatchCategoriesCategoryId(ctx echo.Context, categoryId CategoryId) error
 	// 通貨情報を取得
 	// (GET /currencies)
 	GetCurrencies(ctx echo.Context) error
@@ -51,6 +60,40 @@ type ServerInterface interface {
 // ServerInterfaceWrapper converts echo contexts to parameters.
 type ServerInterfaceWrapper struct {
 	Handler ServerInterface
+}
+
+// GetCategories converts echo context to params.
+func (w *ServerInterfaceWrapper) GetCategories(ctx echo.Context) error {
+	var err error
+
+	// Invoke the callback with all the unmarshalled arguments
+	err = w.Handler.GetCategories(ctx)
+	return err
+}
+
+// PostCategories converts echo context to params.
+func (w *ServerInterfaceWrapper) PostCategories(ctx echo.Context) error {
+	var err error
+
+	// Invoke the callback with all the unmarshalled arguments
+	err = w.Handler.PostCategories(ctx)
+	return err
+}
+
+// PatchCategoriesCategoryId converts echo context to params.
+func (w *ServerInterfaceWrapper) PatchCategoriesCategoryId(ctx echo.Context) error {
+	var err error
+	// ------------- Path parameter "category_id" -------------
+	var categoryId CategoryId
+
+	err = runtime.BindStyledParameterWithLocation("simple", false, "category_id", runtime.ParamLocationPath, ctx.Param("category_id"), &categoryId)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid format for parameter category_id: %s", err))
+	}
+
+	// Invoke the callback with all the unmarshalled arguments
+	err = w.Handler.PatchCategoriesCategoryId(ctx, categoryId)
+	return err
 }
 
 // GetCurrencies converts echo context to params.
@@ -215,6 +258,9 @@ func RegisterHandlersWithBaseURL(router EchoRouter, si ServerInterface, baseURL 
 		Handler: si,
 	}
 
+	router.GET(baseURL+"/categories", wrapper.GetCategories)
+	router.POST(baseURL+"/categories", wrapper.PostCategories)
+	router.PATCH(baseURL+"/categories/:category_id", wrapper.PatchCategoriesCategoryId)
 	router.GET(baseURL+"/currencies", wrapper.GetCurrencies)
 	router.POST(baseURL+"/currencies", wrapper.PostCurrencies)
 	router.PATCH(baseURL+"/currencies/:currency_id", wrapper.PatchCurrenciesCurrencyId)

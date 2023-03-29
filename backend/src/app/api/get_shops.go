@@ -29,10 +29,10 @@ func (a *API) GetShops(ctx echo.Context) error {
 		ma := timeToString(s.ModifiedAt)
 		ca := timeToString(s.CreatedAt)
 		sa := oapi.Shop{
-			ShopId:   &s.ShopID,
-			ShopName: &s.ShopName,
+			ShopId:     &s.ShopID,
+			ShopName:   &s.ShopName,
 			ModifiedAt: &ma,
-			CreatedAt: &ca,
+			CreatedAt:  &ca,
 		}
 		sas = append(sas, sa)
 	}

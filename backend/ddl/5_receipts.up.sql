@@ -2,6 +2,7 @@ create table receipts (
   receipt_id INT not null auto_increment comment 'receipt_id',
   shop_id INT not null comment 'shop_id',
   currency_id INT not null comment 'currency_id',
+  category_id INT not null comment 'category_id',
   total_price FLOAT not null comment 'total_price',
   purchase_date DATE not null comment 'purchase_date',
   modified_at TIMESTAMP default current_timestamp on update current_timestamp not null comment 'modified_at',
@@ -16,8 +17,11 @@ create index receipts_IX1
 create index receipts_IX2
   on receipts(purchase_date);
 
-alter table receipts
-  add constraint receipts_FK1 foreign key (currency_id) references currencies(currency_id);
+ALTER TABLE receipts
+  ADD CONSTRAINT receipts_FK1 FOREIGN KEY (category_id) REFERENCES categories(category_id);
 
-alter table receipts
-  add constraint receipts_FK2 foreign key (shop_id) references shops(shop_id);
+ALTER TABLE receipts
+  ADD CONSTRAINT receipts_FK2 FOREIGN KEY (currency_id) REFERENCES currencies(currency_id);
+
+ALTER TABLE receipts
+  ADD CONSTRAINT receipts_FK3 FOREIGN KEY (shop_id) REFERENCES shops(shop_id);

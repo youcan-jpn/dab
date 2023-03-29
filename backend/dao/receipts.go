@@ -19,6 +19,8 @@ var ReceiptDetailAllCulumns = []string{
 	"shop_name",
 	"currency_id",
 	"currency_name",
+	"category_id",
+	"category_name",
 	"total_price",
 	"purchase_date",
 	"product_id",
@@ -34,6 +36,8 @@ var ReceiptDetailColumnsWOMagic = []string{
 	"shop_name",
 	"currency_id",
 	"currency_name",
+	"category_id",
+	"category_name",
 	"total_price",
 	"purchase_date",
 	"product_id",
@@ -48,7 +52,9 @@ type ReceiptDetail struct {
 	ShopID       int
 	ShopName     string
 	CurrencyID   int
-	CurrencyName int
+	CurrencyName string
+	CategoryID   int
+	CategoryName string
 	TotalPrice   float32
 	PurchaseDate *time.Time
 	ProductID    int
@@ -65,6 +71,8 @@ func (t *ReceiptDetail) Values() []interface{} {
 		t.ShopName,
 		t.CurrencyID,
 		t.CurrencyName,
+		t.CategoryID,
+		t.CategoryName,
 		t.TotalPrice,
 		t.PurchaseDate,
 		t.ProductID,
@@ -81,6 +89,9 @@ func (t *ReceiptDetail) SetMap() map[string]interface{} {
 		"shop_id":       t.ShopID,
 		"shop_name":     t.ShopName,
 		"currency_id":   t.CurrencyID,
+		"currency_name": t.CurrencyName,
+		"category_id":   t.CategoryID,
+		"category_name": t.CategoryName,
 		"total_price":   t.TotalPrice,
 		"purchase_date": t.PurchaseDate,
 		"product_id":    t.ProductID,
@@ -98,6 +109,8 @@ func (t *ReceiptDetail) Ptrs() []interface{} {
 		&t.ShopName,
 		&t.CurrencyID,
 		&t.CurrencyName,
+		&t.CategoryID,
+		&t.CategoryName,
 		&t.TotalPrice,
 		&t.PurchaseDate,
 		&t.ProductID,
@@ -116,7 +129,7 @@ func IterateReceiptDetail(sc interface{ Scan(...interface{}) error }) (ReceiptDe
 	return t, nil
 }
 
-func SelectReceiptDetailsByConditions(ctx context.Context, txn *sql.Tx, receipt_id int, shop_id int, currency_id int, min_price float32, max_price float32, since *time.Time, until *time.Time) ([]*ReceiptDetail, error) {
+func SelectReceiptDetailsByConditions(ctx context.Context, txn *sql.Tx, receipt_id int, shop_id int, currency_id int, category_id int, min_price float32, max_price float32, since *time.Time, until *time.Time) ([]*ReceiptDetail, error) {
 	eq := squirrel.Eq{}
 	geq := squirrel.GtOrEq{}
 	leq := squirrel.LtOrEq{}
@@ -128,7 +141,10 @@ func SelectReceiptDetailsByConditions(ctx context.Context, txn *sql.Tx, receipt_
 		eq["s.shop_id"] = shop_id
 	}
 	if currency_id > 0 {
-		eq["c.currency_id"] = currency_id
+		eq["cu.currency_id"] = currency_id
+	}
+	if category_id > 0 {
+		eq["ca.category_id"] = category_id
 	}
 	if min_price > 0 {
 		geq["r.total_prcie"] = min_price
@@ -148,8 +164,10 @@ func SelectReceiptDetailsByConditions(ctx context.Context, txn *sql.Tx, receipt_
 			"r.receipt_id",
 			"s.shop_id",
 			"s.shop_name",
-			"c.currency_id",
-			"c.currency_name",
+			"cu.currency_id",
+			"cu.currency_name",
+			"ca.category_id",
+			"ca.category_name",
 			"r.total_price",
 			"r.purchase_date",
 			"p.product_id",
@@ -161,7 +179,8 @@ func SelectReceiptDetailsByConditions(ctx context.Context, txn *sql.Tx, receipt_
 		From("receipts as r").
 		LeftJoin("products as p ON p.receipt_id = r.receipt_id").
 		LeftJoin("shops as s ON r.shop_id = s.shop_id").
-		LeftJoin("currencies as c ON r.currency_id = c.currency_id").
+		LeftJoin("currencies as cu ON r.currency_id = cu.currency_id").
+		LeftJoin("categories as ca ON r.currency_id = ca.category_id").
 		Where(eq).
 		Where(leq).
 		Where(geq).

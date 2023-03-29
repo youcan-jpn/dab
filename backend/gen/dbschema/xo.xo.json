@@ -6,6 +6,66 @@
       "tables": [
         {
           "type": "table",
+          "name": "categories",
+          "columns": [
+            {
+              "name": "category_id",
+              "datatype": {
+                "type": "int"
+              },
+              "is_primary": true,
+              "is_sequence": true
+            },
+            {
+              "name": "category_name",
+              "datatype": {
+                "type": "varchar",
+                "prec": 15
+              }
+            }
+          ],
+          "primary_keys": [
+            {
+              "name": "category_id",
+              "datatype": {
+                "type": "int"
+              },
+              "is_primary": true,
+              "is_sequence": true
+            }
+          ],
+          "indexes": [
+            {
+              "name": "category_name",
+              "fields": [
+                {
+                  "name": "category_name",
+                  "datatype": {
+                    "type": "varchar",
+                    "prec": 15
+                  }
+                }
+              ]
+            },
+            {
+              "name": "categories_category_id_pkey",
+              "fields": [
+                {
+                  "name": "category_id",
+                  "datatype": {
+                    "type": "int"
+                  },
+                  "is_primary": true,
+                  "is_sequence": true
+                }
+              ],
+              "is_unique": true,
+              "is_primary": true
+            }
+          ]
+        },
+        {
+          "type": "table",
           "name": "currencies",
           "columns": [
             {
@@ -218,6 +278,12 @@
               }
             },
             {
+              "name": "category_id",
+              "datatype": {
+                "type": "int"
+              }
+            },
+            {
               "name": "total_price",
               "datatype": {
                 "type": "float"
@@ -259,7 +325,7 @@
               "name": "receipts_FK1",
               "fields": [
                 {
-                  "name": "currency_id",
+                  "name": "category_id",
                   "datatype": {
                     "type": "int"
                   }
@@ -268,6 +334,17 @@
             },
             {
               "name": "receipts_FK2",
+              "fields": [
+                {
+                  "name": "currency_id",
+                  "datatype": {
+                    "type": "int"
+                  }
+                }
+              ]
+            },
+            {
+              "name": "receipts_FK3",
               "fields": [
                 {
                   "name": "shop_id",
@@ -320,6 +397,28 @@
               "name": "receipts_FK1",
               "column": [
                 {
+                  "name": "category_id",
+                  "datatype": {
+                    "type": "int"
+                  }
+                }
+              ],
+              "ref_table": "categories",
+              "ref_column": [
+                {
+                  "name": "category_id",
+                  "datatype": {
+                    "type": "int"
+                  },
+                  "is_primary": true,
+                  "is_sequence": true
+                }
+              ]
+            },
+            {
+              "name": "receipts_FK2",
+              "column": [
+                {
                   "name": "currency_id",
                   "datatype": {
                     "type": "int"
@@ -339,7 +438,7 @@
               ]
             },
             {
-              "name": "receipts_FK2",
+              "name": "receipts_FK3",
               "column": [
                 {
                   "name": "shop_id",
