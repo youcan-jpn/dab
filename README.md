@@ -27,6 +27,9 @@ domestic accounts book app
   - きちんと管理したいわけではないので税込みで入力する
 - REST APIの設計においてGET /receiptsで複数の検索条件をクエリパラメータにするのが気になった
   - [Design RESTful query API with a long list of query parameters](https://stackoverflow.com/questions/14202257/design-restful-query-api-with-a-long-list-of-query-parameters)を参考にして、POST /receipts/searchとした
+- backend/testing/data/db/test.sqlから日本語のカテゴリー名を流し込むと文字化けしてしまった
+  - 直接mysqlを除くと日本語で表示されていたのでGo側の文字コード等に問題があるのかと思ったが、実際はsqlを記述する際にn-prefixというものが必要なだけであった
+  - 参考：[SQLServerに日本語データをInsertすると文字化けする。](https://kitigai.hatenablog.com/entry/2018/05/27/010440)
 
 ## References
 ### Official
@@ -42,3 +45,4 @@ domestic accounts book app
 - [oapi-codegenを使ってみた](https://speakerdeck.com/akeno/oapi-codegenwoshi-tutemita)
 - [[Go] OpenAPI コード自動生成でビジネスロジックに集中する開発へ](https://qiita.com/nyanchu/items/1c259750352b49e96a18)
 - [golangのxoを導入を決めてファイルの運用方法がいい感じになってきたので書いておく](https://tsuyoshi-nakamura.hatenablog.com/entry/2018/11/16/100133)
+- [GoのWebアプリをテストするノウハウ](https://zenn.dev/media_engine/articles/testing-go-applications)

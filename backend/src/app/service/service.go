@@ -188,8 +188,12 @@ func GetCategories(ctx context.Context, txn *sql.Tx) ([]*daocore.Category, error
 	return daocore.SelectCategoryByCategoryName(ctx, txn, nil)
 }
 
-func PostCategory(ctx context.Context, txn *sql.Tx, category_name string) error {
-	return daocore.InsertCategory(ctx, txn, []*daocore.Category{{CategoryID: 0, CategoryName: category_name}})
+func GetOneCategoryByID(ctx context.Context, txn *sql.Tx, category_id int) (daocore.Category, error) {
+	return daocore.SelectOneCategoryByCategoryID(ctx, txn, &category_id)
+}
+
+func PostCategory(ctx context.Context, txn *sql.Tx, category_name string) (sql.Result, error) {
+	return dao.InsertOneCategoryReturningResult(ctx, txn, &daocore.Category{CategoryID: 0, CategoryName: category_name})
 }
 
 func PatchCategory(ctx context.Context, txn *sql.Tx, category_id int, category_name string) error {
