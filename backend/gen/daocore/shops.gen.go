@@ -2,229 +2,226 @@
 package daocore
 
 import (
-    "context"
-    "database/sql"
-    "strings"
-    "time"
+	"context"
+	"database/sql"
+	"strings"
+	"time"
 
-    "github.com/Masterminds/squirrel"
+	"github.com/Masterminds/squirrel"
 
-    "github.com/youcan-jpn/dab/backend/src/dberror"
-    "github.com/youcan-jpn/dab/backend/src/util/filter"
+	"github.com/youcan-jpn/dab/backend/src/dberror"
+	"github.com/youcan-jpn/dab/backend/src/util/filter"
 )
 
 const ShopTableName = "shops"
 
 var ShopAllColumns = []string{
-    "shop_id",
-    "shop_name",
-    "modified_at",
-    "created_at",
+	"shop_id",
+	"shop_name",
+	"modified_at",
+	"created_at",
 }
 
 var ShopColumnsWOMagics = []string{
-    "shop_id",
-    "shop_name",
+	"shop_id",
+	"shop_name",
 }
 
 var ShopPrimaryKeyColumns = []string{
-    "shop_id",
+	"shop_id",
 }
 
 type Shop struct {
-    ShopID int
-    ShopName string
-    ModifiedAt *time.Time
-    CreatedAt *time.Time
+	ShopID     int
+	ShopName   string
+	ModifiedAt *time.Time
+	CreatedAt  *time.Time
 }
 
 func (t *Shop) Values() []interface{} {
-    return []interface{}{
-        t.ShopID,
-        t.ShopName,
-    }
+	return []interface{}{
+		t.ShopID,
+		t.ShopName,
+	}
 }
 
 func (t *Shop) SetMap() map[string]interface{} {
-    return map[string]interface{}{
-        "shop_id": t.ShopID,
-        "shop_name": t.ShopName,
-    }
+	return map[string]interface{}{
+		"shop_id":   t.ShopID,
+		"shop_name": t.ShopName,
+	}
 }
 
 func (t *Shop) Ptrs() []interface{} {
-    return []interface{}{
-        &t.ShopID,
-        &t.ShopName,
-        &t.ModifiedAt,
-        &t.CreatedAt,
-    }
+	return []interface{}{
+		&t.ShopID,
+		&t.ShopName,
+		&t.ModifiedAt,
+		&t.CreatedAt,
+	}
 }
 
-func IterateShop(sc interface{ Scan(...interface{}) error}) (Shop, error) {
-    t := Shop{}
-    if err := sc.Scan(t.Ptrs()...); err != nil {
-        return Shop{}, dberror.MapError(err)
-    }
-    return t, nil
+func IterateShop(sc interface{ Scan(...interface{}) error }) (Shop, error) {
+	t := Shop{}
+	if err := sc.Scan(t.Ptrs()...); err != nil {
+		return Shop{}, dberror.MapError(err)
+	}
+	return t, nil
 }
 
 func SelectShopByShopName(ctx context.Context, txn *sql.Tx, shop_name *string) ([]*Shop, error) {
-    eq := squirrel.Eq{}
-    if shop_name != nil {
-        eq["shop_name"] = *shop_name
-    }
-    query, params, err := squirrel.
-        Select(ShopAllColumns...).
-        From(ShopTableName).
-        Where(eq).
-        ToSql()
-    if err != nil {
-        return nil, dberror.MapError(err)
-    }
-    stmt, err := txn.PrepareContext(ctx, query)
-    if err != nil {
-        return nil, dberror.MapError(err)
-    }
-    rows, err := stmt.QueryContext(ctx, params...)
-    if err != nil {
-        return nil, dberror.MapError(err)
-    }
-    res := make([]*Shop, 0)
-    for rows.Next() {
-        t, err := IterateShop(rows)
-        if err != nil {
-            return nil, dberror.MapError(err)
-        }
-        res = append(res, &t)
-    }
-    return res, nil
+	eq := squirrel.Eq{}
+	if shop_name != nil {
+		eq["shop_name"] = *shop_name
+	}
+	query, params, err := squirrel.
+		Select(ShopAllColumns...).
+		From(ShopTableName).
+		Where(eq).
+		ToSql()
+	if err != nil {
+		return nil, dberror.MapError(err)
+	}
+	stmt, err := txn.PrepareContext(ctx, query)
+	if err != nil {
+		return nil, dberror.MapError(err)
+	}
+	rows, err := stmt.QueryContext(ctx, params...)
+	if err != nil {
+		return nil, dberror.MapError(err)
+	}
+	res := make([]*Shop, 0)
+	for rows.Next() {
+		t, err := IterateShop(rows)
+		if err != nil {
+			return nil, dberror.MapError(err)
+		}
+		res = append(res, &t)
+	}
+	return res, nil
 }
 
 func SelectOneShopByShopID(ctx context.Context, txn *sql.Tx, shop_id *int) (Shop, error) {
-    eq := squirrel.Eq{}
-    if shop_id != nil {
-        eq["shop_id"] = *shop_id
-    }
-    query, params, err := squirrel.
-        Select(ShopAllColumns...).
-        From(ShopTableName).
-        Where(eq).
-        ToSql()
-    if err != nil {
-        return Shop{}, dberror.MapError(err)
-    }
-    stmt, err := txn.PrepareContext(ctx, query)
-    if err != nil {
-        return Shop{}, dberror.MapError(err)
-    }
-    return IterateShop(stmt.QueryRowContext(ctx, params...))
+	eq := squirrel.Eq{}
+	if shop_id != nil {
+		eq["shop_id"] = *shop_id
+	}
+	query, params, err := squirrel.
+		Select(ShopAllColumns...).
+		From(ShopTableName).
+		Where(eq).
+		ToSql()
+	if err != nil {
+		return Shop{}, dberror.MapError(err)
+	}
+	stmt, err := txn.PrepareContext(ctx, query)
+	if err != nil {
+		return Shop{}, dberror.MapError(err)
+	}
+	return IterateShop(stmt.QueryRowContext(ctx, params...))
 }
 
-
-
 func InsertShop(ctx context.Context, txn *sql.Tx, records []*Shop) error {
-    records = filter.OmitNil[Shop](records)
-    if len(records) == 0 {
-        return nil
-    }
-    sq := squirrel.Insert(ShopTableName).Columns(ShopColumnsWOMagics...)
-    for _, r := range records {
-        if r == nil {
-            continue
-        }
-        sq = sq.Values(r.Values()...)
-    }
-    query, params, err := sq.ToSql()
-    if err != nil {
-        return err
-    }
-    stmt, err := txn.PrepareContext(ctx, query)
-    if err != nil {
-        return dberror.MapError(err)
-    }
-    if _, err = stmt.Exec(params...); err != nil {
-        return dberror.MapError(err)
-    }
-    return nil
+	records = filter.OmitNil[Shop](records)
+	if len(records) == 0 {
+		return nil
+	}
+	sq := squirrel.Insert(ShopTableName).Columns(ShopColumnsWOMagics...)
+	for _, r := range records {
+		if r == nil {
+			continue
+		}
+		sq = sq.Values(r.Values()...)
+	}
+	query, params, err := sq.ToSql()
+	if err != nil {
+		return err
+	}
+	stmt, err := txn.PrepareContext(ctx, query)
+	if err != nil {
+		return dberror.MapError(err)
+	}
+	if _, err = stmt.Exec(params...); err != nil {
+		return dberror.MapError(err)
+	}
+	return nil
 }
 
 func UpdateShop(ctx context.Context, txn *sql.Tx, record Shop) error {
-    sql, params, err := squirrel.Update(ShopTableName).SetMap(record.SetMap()).
-        Where(squirrel.Eq{
-        "shop_id": record.ShopID,
-    }).
-        ToSql()
-    if err != nil {
-        return err
-    }
-    stmt, err := txn.PrepareContext(ctx, sql)
-    if err != nil {
-        return dberror.MapError(err)
-    }
-    if _, err = stmt.Exec(params...); err != nil {
-        return dberror.MapError(err)
-    }
-    return nil
+	sql, params, err := squirrel.Update(ShopTableName).SetMap(record.SetMap()).
+		Where(squirrel.Eq{
+			"shop_id": record.ShopID,
+		}).
+		ToSql()
+	if err != nil {
+		return err
+	}
+	stmt, err := txn.PrepareContext(ctx, sql)
+	if err != nil {
+		return dberror.MapError(err)
+	}
+	if _, err = stmt.Exec(params...); err != nil {
+		return dberror.MapError(err)
+	}
+	return nil
 }
 
 func UpsertShop(ctx context.Context, txn *sql.Tx, record Shop) error {
-    updateSQL, params, err := squirrel.Update(ShopTableName).SetMap(record.SetMap()).ToSql()
-    if err != nil {
-        return err
-    }
-    updateSQL = strings.TrimPrefix(updateSQL, "UPDATE "+ShopTableName+" SET ")
-    query, params, err := squirrel.Insert(ShopTableName).Columns(ShopColumnsWOMagics...).Values(record.Values()...).SuffixExpr(squirrel.Expr("ON DUPLICATE KEY UPDATE "+updateSQL, params...)).ToSql()
-    if err != nil {
-        return err
-    }
-    stmt, err := txn.PrepareContext(ctx, query)
-    if err != nil {
-        return dberror.MapError(err)
-    }
-    if _, err = stmt.Exec(params...); err != nil {
-        return dberror.MapError(err)
-    }
-    return nil
+	updateSQL, params, err := squirrel.Update(ShopTableName).SetMap(record.SetMap()).ToSql()
+	if err != nil {
+		return err
+	}
+	updateSQL = strings.TrimPrefix(updateSQL, "UPDATE "+ShopTableName+" SET ")
+	query, params, err := squirrel.Insert(ShopTableName).Columns(ShopColumnsWOMagics...).Values(record.Values()...).SuffixExpr(squirrel.Expr("ON DUPLICATE KEY UPDATE "+updateSQL, params...)).ToSql()
+	if err != nil {
+		return err
+	}
+	stmt, err := txn.PrepareContext(ctx, query)
+	if err != nil {
+		return dberror.MapError(err)
+	}
+	if _, err = stmt.Exec(params...); err != nil {
+		return dberror.MapError(err)
+	}
+	return nil
 }
 
 func DeleteShopByShopName(ctx context.Context, txn *sql.Tx, shop_name string) error {
-    query, params, err := squirrel.
-        Delete(ShopTableName).
-        Where(squirrel.Eq{
-            "shop_name": shop_name,
-        }).
-        ToSql()
-    if err != nil {
-        return dberror.MapError(err)
-    }
-    stmt, err := txn.PrepareContext(ctx, query)
-    if err != nil {
-        return dberror.MapError(err)
-    }
-    if _, err = stmt.Exec(params...); err != nil {
-        return dberror.MapError(err)
-    }
-    return nil
+	query, params, err := squirrel.
+		Delete(ShopTableName).
+		Where(squirrel.Eq{
+			"shop_name": shop_name,
+		}).
+		ToSql()
+	if err != nil {
+		return dberror.MapError(err)
+	}
+	stmt, err := txn.PrepareContext(ctx, query)
+	if err != nil {
+		return dberror.MapError(err)
+	}
+	if _, err = stmt.Exec(params...); err != nil {
+		return dberror.MapError(err)
+	}
+	return nil
 }
 
 func DeleteOneShopByShopID(ctx context.Context, txn *sql.Tx, shop_id int) error {
-    query, params, err := squirrel.
-        Delete(ShopTableName).
-        Where(squirrel.Eq{
-            "shop_id": shop_id,
-        }).
-        ToSql()
-    if err != nil {
-        return dberror.MapError(err)
-    }
-    stmt, err := txn.PrepareContext(ctx, query)
-    if err != nil {
-        return dberror.MapError(err)
-    }
-    if _, err = stmt.Exec(params...); err != nil {
-        return dberror.MapError(err)
-    }
-    return nil
+	query, params, err := squirrel.
+		Delete(ShopTableName).
+		Where(squirrel.Eq{
+			"shop_id": shop_id,
+		}).
+		ToSql()
+	if err != nil {
+		return dberror.MapError(err)
+	}
+	stmt, err := txn.PrepareContext(ctx, query)
+	if err != nil {
+		return dberror.MapError(err)
+	}
+	if _, err = stmt.Exec(params...); err != nil {
+		return dberror.MapError(err)
+	}
+	return nil
 }
-
