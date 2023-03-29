@@ -16,6 +16,7 @@ type Receipt struct {
 	ReceiptID     int
 	ShopID        int
 	CurrencyID    int
+	CategoryID    int
 	TotalPrice    float32
 	purchase_date *time.Time
 	Products      []*Product
@@ -46,12 +47,15 @@ func (p Product) ToDAOProduct(rid int) (*daocore.Product, error) {
 }
 
 // Receipts
-func PostReceipt(ctx context.Context, txn *sql.Tx, shop_id int, currency_id int, purchase_date *time.Time, total_price float32, products []*Product) error {
+func PostReceipt(ctx context.Context, txn *sql.Tx, shop_id int, currency_id int, category_id int, purchase_date *time.Time, total_price float32, products []*Product) error {
 	if shop_id <= 0 {
 		return fmt.Errorf("'shop_id' has to be positive")
 	}
 	if currency_id <= 0 {
 		return fmt.Errorf("'currency_id' has to be positive")
+	}
+	if category_id <= 0 {
+		return fmt.Errorf("'category_id' has to be positive")
 	}
 	if purchase_date == nil {
 		return fmt.Errorf("'purchase_date' has to be not nil")
@@ -67,6 +71,7 @@ func PostReceipt(ctx context.Context, txn *sql.Tx, shop_id int, currency_id int,
 		ReceiptID:    0,
 		ShopID:       shop_id,
 		CurrencyID:   currency_id,
+		CategoryID:   category_id,
 		TotalPrice:   total_price,
 		PurchaseDate: purchase_date,
 	}
@@ -94,13 +99,13 @@ func PostReceipt(ctx context.Context, txn *sql.Tx, shop_id int, currency_id int,
 	return err
 }
 
-func PostReceiptsSearch(ctx context.Context, txn *sql.Tx, receipt_id int, shop_id int, currency_id int, min_price float32, max_price float32, since *time.Time, until *time.Time) ([]*dao.ReceiptDetail, error) {
-	return dao.SelectReceiptDetailsByConditions(ctx, txn, receipt_id, shop_id, currency_id, min_price, max_price, since, until)
+func PostReceiptsSearch(ctx context.Context, txn *sql.Tx, receipt_id int, shop_id int, currency_id int, category_id int, min_price float32, max_price float32, since *time.Time, until *time.Time) ([]*dao.ReceiptDetail, error) {
+	return dao.SelectReceiptDetailsByConditions(ctx, txn, receipt_id, shop_id, currency_id, category_id, min_price, max_price, since, until)
 }
 
 func GetReceipts(ctx context.Context, txn *sql.Tx, receipt_id int) ([]*dao.ReceiptDetail, error) {
 	if receipt_id > 0 {
-		return dao.SelectReceiptDetailsByConditions(ctx, txn, receipt_id, 0, 0, 0, 0, nil, nil)
+		return dao.SelectReceiptDetailsByConditions(ctx, txn, receipt_id, 0, 0, 0, 0, 0, nil, nil)
 	}
 	return nil, fmt.Errorf("receipt_id has to be integer (> 0)")
 }
