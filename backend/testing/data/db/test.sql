@@ -30,6 +30,27 @@ VALUES (
     142.25
 );
 
+INSERT INTO receipts (
+    receipt_id,  -- 実際はAUTO_INCREMENT
+    shop_id,
+    currency_id,
+    total_price,
+    purchase_date
+)
+VALUES (
+    1,
+    1,
+    1,
+    900,
+    "2022-03-01"
+), (
+    2,
+    2,
+    2,
+    30,
+    "2012-08-29"
+);
+
 INSERT INTO products (
     receipt_id,
     product_id,
@@ -51,25 +72,4 @@ VALUES (
     2,
     "sample_product_2_2",
     20
-);
-
-INSERT INTO receipts (
-    receipt_id,  -- 実際はAUTO_INCREMENT
-    shop_id,
-    currency_id,
-    total_price,
-    purchase_date
-)
-VALUES (
-    1,
-    1,
-    1,
-    900,
-    "2022-03-01"
-), (
-    2,
-    2,
-    2,
-    30,
-    "2012-08-29"
 );
