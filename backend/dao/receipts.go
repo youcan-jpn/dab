@@ -180,7 +180,7 @@ func SelectReceiptDetailsByConditions(ctx context.Context, txn *sql.Tx, receipt_
 		LeftJoin("products as p ON p.receipt_id = r.receipt_id").
 		LeftJoin("shops as s ON r.shop_id = s.shop_id").
 		LeftJoin("currencies as cu ON r.currency_id = cu.currency_id").
-		LeftJoin("categories as ca ON r.currency_id = ca.category_id").
+		LeftJoin("categories as ca ON r.category_id = ca.category_id").
 		Where(eq).
 		Where(leq).
 		Where(geq).
