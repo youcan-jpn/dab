@@ -33,3 +33,13 @@ func objToTime(o *oapi.Date, tz *time.Location) *time.Time {
 	t := time.Date(*y, m, *d, 0, 0, 0, 0, tz)
 	return &t
 }
+
+func timeToObj(t *time.Time) *oapi.Date {
+	py, m, pd := t.Date()
+	pm := int(m)
+	return &oapi.Date{
+		Year:  &py,
+		Month: &pm,
+		Day:   &pd,
+	}
+}
