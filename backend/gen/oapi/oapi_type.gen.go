@@ -81,9 +81,15 @@ type Product struct {
 	// Price 金額
 	Price *Price `json:"price,omitempty"`
 
+	// ProductId 購入品ID
+	ProductId *ProductId `json:"product_id,omitempty"`
+
 	// ProductName 商品名
 	ProductName *ProductName `json:"product_name,omitempty"`
 }
+
+// ProductId 購入品ID
+type ProductId = int
 
 // ProductName 商品名
 type ProductName = string

@@ -250,6 +250,8 @@ components:
       type: object
       description: 商品リストの1要素
       properties:
+        product_id:
+          $ref: "#/components/schemas/product_id"
         product_name:
           $ref: "#/components/schemas/product_name"
         price:
