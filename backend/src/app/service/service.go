@@ -13,13 +13,13 @@ import (
 )
 
 type Receipt struct {
-	ReceiptID     int
-	ShopID        int
-	CurrencyID    int
-	CategoryID    int
-	TotalPrice    float32
-	purchase_date *time.Time
-	Products      []*Product
+	ReceiptID    int
+	ShopID       int
+	CurrencyID   int
+	CategoryID   int
+	TotalPrice   float32
+	PurchaseDate *time.Time
+	Products     []*Product
 }
 
 type Product struct {
@@ -47,24 +47,24 @@ func (p Product) ToDAOProduct(rid int) (*daocore.Product, error) {
 }
 
 // Receipts
-func PostReceipt(ctx context.Context, txn *sql.Tx, shop_id int, currency_id int, category_id int, purchase_date *time.Time, total_price float32, products []*Product) error {
+func PostReceipt(ctx context.Context, txn *sql.Tx, shop_id int, currency_id int, category_id int, purchase_date *time.Time, total_price float32, products []*Product) (int, error) {
 	if shop_id <= 0 {
-		return fmt.Errorf("'shop_id' has to be positive")
+		return 0, fmt.Errorf("'shop_id' has to be positive")
 	}
 	if currency_id <= 0 {
-		return fmt.Errorf("'currency_id' has to be positive")
+		return 0, fmt.Errorf("'currency_id' has to be positive")
 	}
 	if category_id <= 0 {
-		return fmt.Errorf("'category_id' has to be positive")
+		return 0, fmt.Errorf("'category_id' has to be positive")
 	}
 	if purchase_date == nil {
-		return fmt.Errorf("'purchase_date' has to be not nil")
+		return 0, fmt.Errorf("'purchase_date' has to be not nil")
 	}
 	if total_price <= 0 {
-		return fmt.Errorf("'total_price' has to be positive")
+		return 0, fmt.Errorf("'total_price' has to be positive")
 	}
 	if products == nil {
-		return fmt.Errorf("'products' has to be not nil")
+		return 0, fmt.Errorf("'products' has to be not nil")
 	}
 
 	r := daocore.Receipt{
@@ -78,25 +78,25 @@ func PostReceipt(ctx context.Context, txn *sql.Tx, shop_id int, currency_id int,
 
 	res, err := dao.InsertOneReceiptReturningResult(ctx, txn, &r)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
 	rid, err := res.LastInsertId()
 	if err != nil {
-		return err
+		return 0, err
 	}
 
 	ps := make([]*daocore.Product, 0, len(products))
 	for _, p := range products {
 		pp, err := p.ToDAOProduct(int(rid))
 		if err != nil {
-			return err
+			return 0, err
 		}
 		ps = append(ps, pp)
 	}
 
 	err = daocore.InsertProduct(ctx, txn, ps)
-	return err
+	return int(rid), err
 }
 
 func PostReceiptsSearch(ctx context.Context, txn *sql.Tx, receipt_id int, shop_id int, currency_id int, category_id int, min_price float32, max_price float32, since *time.Time, until *time.Time) ([]*dao.ReceiptDetail, error) {
@@ -115,15 +115,16 @@ func PatchReceipt(ctx context.Context, txn *sql.Tx, rec Receipt) error {
 		ReceiptID:    rec.ReceiptID,
 		ShopID:       rec.ShopID,
 		CurrencyID:   rec.CurrencyID,
+		CategoryID:   rec.CategoryID,
 		TotalPrice:   rec.TotalPrice,
-		PurchaseDate: rec.purchase_date,
+		PurchaseDate: rec.PurchaseDate,
 	}
-	err := daocore.UpsertReceipt(ctx, txn, r)
+	err := daocore.DeleteProductByReceiptID(ctx, txn, r.ReceiptID)
 	if err != nil {
 		return err
 	}
 
-	err = daocore.DeleteProductByReceiptID(ctx, txn, r.ReceiptID)
+	err = daocore.UpsertReceipt(ctx, txn, r)
 	if err != nil {
 		return err
 	}
@@ -201,7 +202,7 @@ func PostCategory(ctx context.Context, txn *sql.Tx, category_name string) (sql.R
 }
 
 func PatchCategory(ctx context.Context, txn *sql.Tx, category_id int, category_name string) error {
-	if category_id > 0 && len(category_name) > 0{
+	if category_id > 0 && len(category_name) > 0 {
 		return daocore.UpsertCategory(ctx, txn, daocore.Category{CategoryID: category_id, CategoryName: category_name})
 	}
 	return fmt.Errorf("'category_id' and 'category_name' have to be set")
