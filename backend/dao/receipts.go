@@ -153,10 +153,10 @@ func SelectReceiptDetailsByConditions(ctx context.Context, txn *sql.Tx, receipt_
 		leq["r.total_price"] = max_price
 	}
 	if since != nil {
-		geq["r.since"] = since // TODO: この形式で大丈夫かテスト
+		geq["r.purchase_date"] = since // TODO: この形式で大丈夫かテスト
 	}
 	if until != nil {
-		geq["r.until"] = until // TODO: この形式で大丈夫かテスト
+		leq["r.purchase_date"] = until // TODO: この形式で大丈夫かテスト
 	}
 
 	query, params, err := squirrel.
