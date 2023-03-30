@@ -11,7 +11,7 @@ import (
 )
 
 func (a *API) PostCategories(ctx echo.Context) error {
-	var cate oapi.NewOrUpdatedCategory
+	var cate oapi.PostCategoriesJSONRequestBody
 	err := ctx.Bind(&cate)
 	if err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())

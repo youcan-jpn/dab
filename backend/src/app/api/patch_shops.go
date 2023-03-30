@@ -11,7 +11,7 @@ import (
 )
 
 func (a *API) PatchShopsShopId(ctx echo.Context, shopId oapi.ShopId) error {
-	var shop oapi.Shop
+	var shop oapi.PatchShopsShopIdJSONRequestBody
 	err := ctx.Bind(&shop)
 	if err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())

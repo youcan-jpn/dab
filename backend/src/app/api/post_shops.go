@@ -11,7 +11,7 @@ import (
 )
 
 func (a *API) PostShops(ctx echo.Context) error {
-	var shop oapi.NewOrUpdatedShop
+	var shop oapi.PostShopsJSONRequestBody
 	err := ctx.Bind(&shop)
 	if err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())

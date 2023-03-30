@@ -11,7 +11,7 @@ import (
 )
 
 func (a *API) PostCurrencies(ctx echo.Context) error {
-	var cu oapi.NewOrUpdatedCurrency
+	var cu oapi.PostCurrenciesJSONRequestBody
 	err := ctx.Bind(&cu)
 	if err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())

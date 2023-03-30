@@ -11,7 +11,7 @@ import (
 )
 
 func (a *API) PatchCurrenciesCurrencyId(ctx echo.Context, currencyId oapi.CurrencyId) error {
-	var cu oapi.Currency
+	var cu oapi.PatchCurrenciesCurrencyIdJSONRequestBody
 	err := ctx.Bind(&cu)
 	if err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())

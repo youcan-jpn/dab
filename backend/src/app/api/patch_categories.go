@@ -11,7 +11,7 @@ import (
 )
 
 func (a *API) PatchCategoriesCategoryId(ctx echo.Context, categoryId oapi.CategoryId) error {
-	var cate oapi.Category
+	var cate oapi.PatchCategoriesCategoryIdJSONRequestBody
 	err := ctx.Bind(&cate)
 	if err != nil {
 		return ctx.String(http.StatusBadRequest, err.Error())
