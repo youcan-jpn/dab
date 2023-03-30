@@ -27,7 +27,7 @@ func (a *API) GetCategories(ctx echo.Context) error {
 	cs := make([]oapi.Category, 0, len(cas))
 	for _, c := range cas {
 		ca := oapi.Category{
-			CategoryId: &c.CategoryID,
+			CategoryId:   &c.CategoryID,
 			CategoryName: &c.CategoryName,
 		}
 		cs = append(cs, ca)

@@ -46,7 +46,7 @@ func (a *API) PostCategories(ctx echo.Context) error {
 	}
 
 	return ctx.JSON(http.StatusOK, oapi.Category{
-		CategoryId:     &res.CategoryID,
-		CategoryName:   &res.CategoryName,
+		CategoryId:   &res.CategoryID,
+		CategoryName: &res.CategoryName,
 	})
 }

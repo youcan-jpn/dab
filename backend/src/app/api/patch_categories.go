@@ -41,7 +41,7 @@ func (a *API) PatchCategoriesCategoryId(ctx echo.Context, categoryId oapi.Catego
 	}
 
 	return ctx.JSON(http.StatusOK, oapi.Category{
-		CategoryId:     &res.CategoryID,
-		CategoryName:   &res.CategoryName,
+		CategoryId:   &res.CategoryID,
+		CategoryName: &res.CategoryName,
 	})
 }

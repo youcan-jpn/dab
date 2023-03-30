@@ -49,10 +49,10 @@ func (a *API) PostCurrencies(ctx echo.Context) error {
 	ca := timeToString(res.CreatedAt)
 
 	return ctx.JSON(http.StatusOK, oapi.Currency{
-		CurrencyId: &res.CurrencyID,
+		CurrencyId:   &res.CurrencyID,
 		CurrencyName: &res.CurrencyName,
-		InYen: &iy,
-		ModifiedAt: &ma,
-		CreatedAt: &ca,
+		InYen:        &iy,
+		ModifiedAt:   &ma,
+		CreatedAt:    &ca,
 	})
 }

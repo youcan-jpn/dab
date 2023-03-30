@@ -43,10 +43,10 @@ func (a *API) PatchCurrenciesCurrencyId(ctx echo.Context, currencyId oapi.Curren
 	ma := timeToString(res.ModifiedAt)
 	ca := timeToString(res.CreatedAt)
 	return ctx.JSON(http.StatusOK, oapi.Currency{
-		CurrencyId: &res.CurrencyID,
+		CurrencyId:   &res.CurrencyID,
 		CurrencyName: &res.CurrencyName,
-		InYen: &res.InYen,
-		ModifiedAt: &ma,
-		CreatedAt: &ca,
+		InYen:        &res.InYen,
+		ModifiedAt:   &ma,
+		CreatedAt:    &ca,
 	})
 }

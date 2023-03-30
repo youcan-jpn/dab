@@ -30,11 +30,11 @@ func (a *API) GetCurrencies(ctx echo.Context) error {
 		ma := timeToString(c.ModifiedAt)
 		cat := timeToString(c.CreatedAt)
 		ca := oapi.Currency{
-			CurrencyId: &c.CurrencyID,
+			CurrencyId:   &c.CurrencyID,
 			CurrencyName: &c.CurrencyName,
-			InYen: &iy,
-			ModifiedAt: &ma,
-			CreatedAt: &cat,
+			InYen:        &iy,
+			ModifiedAt:   &ma,
+			CreatedAt:    &cat,
 		}
 		cs = append(cs, ca)
 	}
