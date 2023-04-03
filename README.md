@@ -20,6 +20,22 @@ domestic accounts book app
 - 複数通貨のサポート
   - とりあえずJPY・CHF
 
+## TODOs
+### Backend
+- [ ] testの追加
+- [ ] RequestBodyのプロパティ欠損時の対応
+- [ ] Middlewareの調査
+- [ ] Loggerの追加
+
+### Frontend
+- [x] Reactの導入
+- [x] React Routerの導入
+- [x] MUIの導入
+- [ ] ディレクトリ構成の決定
+- [ ] Storybookの導入？
+- [ ] Scaffdogの導入？
+- [ ] Recoilの導入?
+
 ## Notes
 - CHFだと浮動小数点数で金額を扱う必要が出てきそう
   - 厳密な金額管理が必要なわけではないので無視
@@ -33,11 +49,18 @@ domestic accounts book app
 
 ## References
 ### Official
+#### Backend
 - [Echo](https://echo.labstack.com/)
 - [migrate](https://github.com/golang-migrate/migrate)
 - [xo](https://github.com/xo/xo)
 - [oapi-codegen](https://github.com/deepmap/oapi-codegen)
 - [A5:SQL Mk-2](https://a5m2.mmatsubara.com/)
+
+##### Frontend
+- [Vite](https://ja.vitejs.dev/)
+- [React](https://react.dev/)
+- [React Router](https://reactrouter.com/en/main)
+- [MUI](https://mui.com/)
 #### Others
 - [echo.Context を最大限に活用する](https://codehex.hateblo.jp/entry/echo-context)
 - [OpenAPIからGo言語のコードを自動生成してくれるツールを試してみた](https://zenn.dev/rescuenow/articles/3c9a19eb2c0655)
@@ -46,3 +69,5 @@ domestic accounts book app
 - [[Go] OpenAPI コード自動生成でビジネスロジックに集中する開発へ](https://qiita.com/nyanchu/items/1c259750352b49e96a18)
 - [golangのxoを導入を決めてファイルの運用方法がいい感じになってきたので書いておく](https://tsuyoshi-nakamura.hatenablog.com/entry/2018/11/16/100133)
 - [GoのWebアプリをテストするノウハウ](https://zenn.dev/media_engine/articles/testing-go-applications)
+- [フロントエンドエンジニアが参考にするデザインシステムをまとめてみた](https://qiita.com/bikky_no_yakata/items/368b02c3df178d4e0472)
+- [フロントエンド API通信戦略](https://zenn.dev/sutamac/articles/27246dfe1b5a8e)
