@@ -30,7 +30,9 @@ domestic accounts book app
 ### Frontend
 - [x] Reactの導入
 - [x] React Routerの導入
+- [ ] React Hook Formの導入？
 - [x] MUIの導入
+- [ ] prettierの設定
 - [ ] ディレクトリ構成の決定
 - [ ] Storybookの導入？
 - [ ] Scaffdogの導入？
@@ -60,7 +62,12 @@ domestic accounts book app
 - [Vite](https://ja.vitejs.dev/)
 - [React](https://react.dev/)
 - [React Router](https://reactrouter.com/en/main)
+- [React Hook Form](https://react-hook-form.com/)
 - [MUI](https://mui.com/)
+- [AXIOS](https://axios-http.com/)
+- [Orval](https://orval.dev/)
+
+
 #### Others
 - [echo.Context を最大限に活用する](https://codehex.hateblo.jp/entry/echo-context)
 - [OpenAPIからGo言語のコードを自動生成してくれるツールを試してみた](https://zenn.dev/rescuenow/articles/3c9a19eb2c0655)
@@ -71,3 +78,4 @@ domestic accounts book app
 - [GoのWebアプリをテストするノウハウ](https://zenn.dev/media_engine/articles/testing-go-applications)
 - [フロントエンドエンジニアが参考にするデザインシステムをまとめてみた](https://qiita.com/bikky_no_yakata/items/368b02c3df178d4e0472)
 - [フロントエンド API通信戦略](https://zenn.dev/sutamac/articles/27246dfe1b5a8e)
+- [モダンフロントエンドで始めるつらくないReactディレクトリ構成](https://tech-blog.rakus.co.jp/entry/20230208/frontend)
