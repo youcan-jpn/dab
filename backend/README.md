@@ -60,3 +60,4 @@
 - [[Go] OpenAPI コード自動生成でビジネスロジックに集中する開発へ](https://qiita.com/nyanchu/items/1c259750352b49e96a18)
 - [golangのxoを導入を決めてファイルの運用方法がいい感じになってきたので書いておく](https://tsuyoshi-nakamura.hatenablog.com/entry/2018/11/16/100133)
 - [GoのWebアプリをテストするノウハウ](https://zenn.dev/media_engine/articles/testing-go-applications)
+- [Goのフレームワーク「echo」でCORSの設定を行う](https://qiita.com/sola-msr/items/828e2eb45cf05b1a2ad4)

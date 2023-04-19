@@ -12,6 +12,7 @@ import (
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 
 	"github.com/youcan-jpn/dab/backend/gen/oapi"
 	"github.com/youcan-jpn/dab/backend/src/app/api"
@@ -48,6 +49,7 @@ func run() error {
 	}
 
 	e := echo.New()
+	e.Use(middleware.CORS())
 
 	timezone, err := time.LoadLocation("Asia/Tokyo")
 	if err != nil {
