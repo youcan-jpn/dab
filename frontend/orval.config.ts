@@ -18,10 +18,17 @@ export default defineConfig({
         query: {
           useQuery: true,
         },
+        operations: {
+          PostReceiptsSearch: {
+            query: {
+              useQuery: true,
+            }
+          }
+        }
       },
     },
     hooks: {
-      afterAllFilesWrite: "npx prettier --write",
+      afterAllFilesWrite: "prettier --write",
     },
   },
 });

@@ -5,6 +5,7 @@ env:
 extends:
   - plugin:react/recommended
   - standard-with-typescript
+  - prettier
 overrides: []
 parserOptions:
   ecmaVersion: latest
@@ -14,10 +15,20 @@ parserOptions:
 plugins:
   - react
 rules: {
+    "no-multi-spaces": "error",
     "react/jsx-uses-react": "off",
     "react/react-in-jsx-scope": "off",
+    "react/jsx-pascal-case": "error",
+    "react/no-multi-comp": "error",
+    "react/jsx-tag-spacing": "error",
+    "react/jsx-curly-spacing": "error",
+    "react/jsx-boolean-value": "error",
     "@typescript-eslint/explicit-function-return-type": "off",
 }
 ignorePatterns:
   - vite.config.ts
   - orval.config.ts
+  - src/gen/*
+settings:
+  react:
+    version: "detect"

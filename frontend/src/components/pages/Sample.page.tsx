@@ -1,4 +1,4 @@
-import { Typography, Box } from '@mui/material'
+import { Typography, Box } from "@mui/material";
 
 export const SamplePage = () => {
   return (
@@ -6,5 +6,5 @@ export const SamplePage = () => {
       <Typography variant="h3">Sample</Typography>
       <Typography variant="body1">Sample page of this web app.</Typography>
     </Box>
-  )
-}
+  );
+};

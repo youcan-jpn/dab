@@ -80,42 +80,52 @@ export const postReceiptsSearch = (
   return axios.post(`/receipts/search`, receiptConditionsBody, options);
 };
 
-export type PostReceiptsSearchMutationResult = NonNullable<
+export const getPostReceiptsSearchQueryKey = (
+  receiptConditionsBody: ReceiptConditionsBody
+) => [`/receipts/search`, receiptConditionsBody];
+
+export type PostReceiptsSearchQueryResult = NonNullable<
   Awaited<ReturnType<typeof postReceiptsSearch>>
 >;
-export type PostReceiptsSearchMutationBody = ReceiptConditionsBody;
-export type PostReceiptsSearchMutationError = AxiosError<unknown>;
+export type PostReceiptsSearchQueryError = AxiosError<unknown>;
 
 export const usePostReceiptsSearch = <
-  TError = AxiosError<unknown>,
-  TContext = unknown
->(options?: {
-  mutation?: UseMutationOptions<
+  TData = Awaited<ReturnType<typeof postReceiptsSearch>>,
+  TError = AxiosError<unknown>
+>(
+  receiptConditionsBody: ReceiptConditionsBody,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof postReceiptsSearch>>,
+      TError,
+      TData
+    >;
+    axios?: AxiosRequestConfig;
+  }
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } => {
+  const { query: queryOptions, axios: axiosOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ??
+    getPostReceiptsSearchQueryKey(receiptConditionsBody);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof postReceiptsSearch>>> =
+    ({ signal }) =>
+      postReceiptsSearch(receiptConditionsBody, { signal, ...axiosOptions });
+
+  const query = useQuery<
     Awaited<ReturnType<typeof postReceiptsSearch>>,
     TError,
-    { data: ReceiptConditionsBody },
-    TContext
-  >;
-  axios?: AxiosRequestConfig;
-}) => {
-  const { mutation: mutationOptions, axios: axiosOptions } = options ?? {};
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof postReceiptsSearch>>,
-    { data: ReceiptConditionsBody }
-  > = (props) => {
-    const { data } = props ?? {};
-
-    return postReceiptsSearch(data, axiosOptions);
+    TData
+  >({ queryKey, queryFn, ...queryOptions }) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
   };
 
-  return useMutation<
-    Awaited<ReturnType<typeof postReceiptsSearch>>,
-    TError,
-    { data: ReceiptConditionsBody },
-    TContext
-  >(mutationFn, mutationOptions);
+  query.queryKey = queryKey;
+
+  return query;
 };
+
 /**
  * @summary レシートIDを指定して詳細を取得
  */

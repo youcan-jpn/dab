@@ -51,3 +51,12 @@
     - xoのschemaからDAOを生成するためのプログラム群
 - `src`
   - ソースコード
+
+## References
+- [echo.Context を最大限に活用する](https://codehex.hateblo.jp/entry/echo-context)
+- [OpenAPIからGo言語のコードを自動生成してくれるツールを試してみた](https://zenn.dev/rescuenow/articles/3c9a19eb2c0655)
+- [Go (Echo) で複雑な構造のJSON(POSTリクエスト)からデータを取得したい](https://teratail.com/questions/vfwi04zdo1pkvr)
+- [oapi-codegenを使ってみた](https://speakerdeck.com/akeno/oapi-codegenwoshi-tutemita)
+- [[Go] OpenAPI コード自動生成でビジネスロジックに集中する開発へ](https://qiita.com/nyanchu/items/1c259750352b49e96a18)
+- [golangのxoを導入を決めてファイルの運用方法がいい感じになってきたので書いておく](https://tsuyoshi-nakamura.hatenablog.com/entry/2018/11/16/100133)
+- [GoのWebアプリをテストするノウハウ](https://zenn.dev/media_engine/articles/testing-go-applications)
