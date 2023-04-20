@@ -1,23 +1,23 @@
-import axios from 'axios';
-import {
-  QueryClient,
-  QueryClientProvider,
-} from '@tanstack/react-query';
+import { Routes, Route } from 'react-router-dom';
+import { Box } from '@mui/material';
 
+import { HomePage } from './components/pages/Home.page';
 import { SamplePage } from "#/components/pages/Sample.page";
+import { ReceiptTablePage } from '#/components/pages/ReceiptTable.page';
+import { MenuBar } from '#/components/ui/MenuBar';
+
 import "./App.css";
-
-axios.defaults.baseURL = "http://localhost:1323/api";
-
-const queryClient = new QueryClient();
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <h1>Hello</h1>
-      <h2>Here is DAB page</h2>
-      <SamplePage />
-    </QueryClientProvider>
+    <Box className="App">
+      <MenuBar />
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/sample" element={<SamplePage />} />
+        <Route path="/receipts" element={<ReceiptTablePage />} />
+      </Routes>
+    </Box>
   );
 }
 
