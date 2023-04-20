@@ -6,7 +6,10 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 
-import type { Receipt, Date, Price, CurrencyName } from '#/gen/models';
+import type { Receipt } from '#/gen/models';
+
+import { displayPrice } from '#/components/functional/DisplayPrice';
+import { displayDate } from '#/components/functional/DisplayDate';
 
 interface Prop {
   receipts: Receipt[] | undefined
@@ -15,24 +18,6 @@ interface Prop {
 
 export const ReceiptTable: React.FC<Prop> = (prop: Prop) => {
   const { receipts } = prop;
-
-  const displayDate = (date: Date | undefined): string => {
-    if (typeof date !== 'undefined') {
-      if (typeof date.year === 'number' && typeof date.month === 'number' && typeof date.day === 'number') {
-        const dateObject = new Date(`${date.year}-${date.month}-${date.day}`);
-        const ret = dateObject.toLocaleDateString();
-        return ret;
-      }
-    }
-    return '';
-  };
-
-  const displayPrice = (price: Price | undefined, currencyName: CurrencyName | undefined): string => {
-    if (typeof price === 'undefined' || typeof currencyName === 'undefined') {
-      return '';
-    }
-    return `${price.toLocaleString()} ${currencyName}`;
-  }
 
   return (
     <>
