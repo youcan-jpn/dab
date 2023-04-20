@@ -33,7 +33,7 @@ domestic accounts book app
 - [ ] React Hook Formの導入？
 - [x] MUIの導入
 - [x] prettierの設定
-- [ ] ディレクトリ構成の決定
+- [x] ディレクトリ構成の決定
 - [ ] Storybookの導入？
 - [ ] Recoilの導入?
 
