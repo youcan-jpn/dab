@@ -4,6 +4,7 @@ import { Box } from '@mui/material';
 import { HomePage } from './components/pages/Home.page';
 import { SamplePage } from "#/components/pages/Sample.page";
 import { ReceiptTablePage } from '#/components/pages/ReceiptTable.page';
+import { ReceiptDetailPage } from '#/components/pages/ReceiptDetail.page';
 import { MenuBar } from '#/components/ui/MenuBar';
 
 import "./App.css";
@@ -16,6 +17,7 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/sample" element={<SamplePage />} />
         <Route path="/receipts" element={<ReceiptTablePage />} />
+        <Route path="receipts/:receipt_id" element={<ReceiptDetailPage />} />
       </Routes>
     </Box>
   );
