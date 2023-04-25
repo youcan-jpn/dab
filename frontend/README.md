@@ -15,3 +15,5 @@
 - [モダンフロントエンドで始めるつらくないReactディレクトリ構成](https://tech-blog.rakus.co.jp/entry/20230208/frontend)
 - [OpenAPIからコードを自動生成！『Orval』のメリットと選定理由](https://zenn.dev/hrbrain/articles/3ca5d37dd0b80e)
 - [bug?: react-query implementation when POST is used it always transforms into useMutation while for some cases its a useQuery for us! #515](https://github.com/anymaniax/orval/issues/515)
+- [HTTP APIの呼び出し (Orval)](https://fintan-contents.github.io/mobile-app-crib-notes/react-native/santoku/development/implement/http-api/)
+- [Why my React Query does not instant update UI after delete?](https://stackoverflow.com/questions/73970791/why-my-react-query-does-not-instant-update-ui-after-delete)
