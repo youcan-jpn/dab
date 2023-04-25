@@ -6,7 +6,7 @@ ifndef DB_HOST
 endif
 ifndef DB_PORT
 	$(warning DB_PORT was not set; 3396 is used)
-	$(eval DB_PORT := 3336)
+	$(eval DB_PORT := 13306)
 endif
 ifndef DB_USER
 	$(warning DB_USER was not set; root is used)

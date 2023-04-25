@@ -14,7 +14,7 @@ services:
       - ./ddl:/ddl
       - dbdata:/var/lib/mysql
     ports:
-      - "3336:3306"
+      - "13306:3306"
   go-dev:
     build: ./docker/dev/
     container_name: dab-go-dev
