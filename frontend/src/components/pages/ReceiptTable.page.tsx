@@ -1,5 +1,6 @@
 import {useEffect} from 'react';
 import { Box } from "@mui/material";
+import Button from '@mui/material/Button';
 
 import type { ReceiptConditionsBody } from "#/gen/models";
 import { usePostReceiptsSearch } from "#/gen/queries/receipts/receipts";
@@ -23,13 +24,30 @@ export const ReceiptTablePage = () => {
       day: 0,
     },
   };
-  const {data: res, refetch} = usePostReceiptsSearch(cs);
+  const {isLoading, isError, data: res, refetch} = usePostReceiptsSearch(cs);
 
   useEffect(() => {
     setTimeout(() => {
       void refetch();
     }, 10000);
   }, [refetch]);
+
+  if (isLoading) {
+    return (
+      <>
+        <h2>Loading....</h2>
+      </>
+    )
+  }
+
+  if (isError) {
+    return (
+      <>
+        <h2>Failed to Load Receipts&apos; data</h2>
+        <Button variant="contained" onClick={() => {void refetch()}}>Reload</Button>
+      </>
+    )
+  }
 
   return (
     <Box component="main">
