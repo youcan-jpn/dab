@@ -10,4 +10,4 @@ RUN apt-get update && \
 
 WORKDIR /dab
 
-CMD ["/bin/bash"]
+CMD ["go", "run", "cmd/dab/main.go"]
