@@ -1,24 +1,27 @@
-import React, {useCallback} from 'react';
-import { useNavigate } from 'react-router-dom';
-import Divider from '@mui/material/Divider';
-import Paper from '@mui/material/Paper';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import ListItemText from '@mui/material/ListItemText';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import LoupeIcon from '@mui/icons-material/Loupe';
-import DeleteIcon from '@mui/icons-material/Delete';
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import Divider from "@mui/material/Divider";
+import Paper from "@mui/material/Paper";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import ListItemText from "@mui/material/ListItemText";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import LoupeIcon from "@mui/icons-material/Loupe";
+import DeleteIcon from "@mui/icons-material/Delete";
 
-import { useDeleteReceiptsReceiptId, usePostReceiptsSearch } from '#/gen/queries/receipts/receipts';
+import {
+  useDeleteReceiptsReceiptId,
+  usePostReceiptsSearch,
+} from "#/gen/queries/receipts/receipts";
 // import DeleteErrorDialog from './DeleteErrorDialog';
-import type { ReceiptId, ReceiptConditionsBody } from '#/gen/models';
-import axios from 'axios';
+import type { ReceiptId, ReceiptConditionsBody } from "#/gen/models";
+import axios from "axios";
 
 interface IProps {
-  receiptId: ReceiptId,
-  anchorEl: HTMLElement | null,
-  open: boolean,
-  onClose: () => void,
+  receiptId: ReceiptId;
+  anchorEl: HTMLElement | null;
+  open: boolean;
+  onClose: () => void;
 }
 
 const ReceiptMenu: React.FC<IProps> = (props) => {
@@ -44,15 +47,14 @@ const ReceiptMenu: React.FC<IProps> = (props) => {
   };
   const { refetch } = usePostReceiptsSearch(cs);
 
-
   const HandleClick = () => {
-    navigate(`/receipts/${receiptId}`)
-  }
+    navigate(`/receipts/${receiptId}`);
+  };
 
   const HandleDelete = () => {
     try {
-      void deleteFn.mutateAsync({receiptId});
-      console.log("DELETED!")
+      void deleteFn.mutateAsync({ receiptId });
+      console.log("DELETED!");
       void refetch();
     } catch (e) {
       if (axios.isAxiosError(e)) {
@@ -66,12 +68,8 @@ const ReceiptMenu: React.FC<IProps> = (props) => {
   };
 
   return (
-    <Paper sx={{ width: 320, maxWidth: '100%' }}>
-      <Menu
-        open={open}
-        anchorEl={anchorEl}
-        onClose={onClose}
-      >
+    <Paper sx={{ width: 320, maxWidth: "100%" }}>
+      <Menu open={open} anchorEl={anchorEl} onClose={onClose}>
         <MenuItem onClick={HandleClick}>
           <ListItemIcon>
             <LoupeIcon fontSize="small" />
@@ -88,6 +86,6 @@ const ReceiptMenu: React.FC<IProps> = (props) => {
       </Menu>
     </Paper>
   );
-}
+};
 
 export default ReceiptMenu;

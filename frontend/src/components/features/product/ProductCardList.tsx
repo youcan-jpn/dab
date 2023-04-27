@@ -5,8 +5,8 @@ import { ProductCard } from "./ProductCard";
 import type { Product, CurrencyName } from "#/gen/models";
 
 interface IProps {
-  products: Product[]
-  currencyName: CurrencyName
+  products: Product[];
+  currencyName: CurrencyName;
 }
 
 export const ProductCardList: React.FC<IProps> = (props: IProps) => {
@@ -14,7 +14,7 @@ export const ProductCardList: React.FC<IProps> = (props: IProps) => {
 
   return (
     <Box>
-      {products.map((product: Product) =>
+      {products.map((product: Product) => (
         <ProductCard
           key={product.product_id}
           productId={product.product_id}
@@ -22,7 +22,7 @@ export const ProductCardList: React.FC<IProps> = (props: IProps) => {
           price={product.price}
           currencyName={currencyName}
         />
-      )}
+      ))}
     </Box>
-  )
-}
+  );
+};

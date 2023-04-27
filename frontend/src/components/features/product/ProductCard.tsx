@@ -6,14 +6,14 @@ import { displayPrice } from "#/components/functional/DisplayPrice";
 import type { Price } from "#/gen/models";
 
 interface IProps {
-  "productId": number | undefined,
-  "productName": string | undefined,
-  "price": Price | undefined,
-  "currencyName": string | undefined,
+  productId: number | undefined;
+  productName: string | undefined;
+  price: Price | undefined;
+  currencyName: string | undefined;
 }
 
 export const ProductCard: React.FC<IProps> = (props: IProps) => {
-  const {productId, productName, price, currencyName} = props;
+  const { productId, productName, price, currencyName } = props;
 
   return (
     <Card>
@@ -23,5 +23,5 @@ export const ProductCard: React.FC<IProps> = (props: IProps) => {
         <Typography>{displayPrice(price, currencyName)}</Typography>
       </CardContent>
     </Card>
-  )
-}
+  );
+};
